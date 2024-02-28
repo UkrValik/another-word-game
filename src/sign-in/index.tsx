@@ -22,6 +22,11 @@ const SignIn = ({ navigation }: NativeStackScreenProps<SignInStackParamList, 'Si
     setInputActive(false);
   }
 
+  const goToHome = () => {
+    navigation.navigate('Home');
+    setInputActive(false);
+  }
+
   return (
     <TouchableWithoutFeedback onPress={onBackgroundPress}>
       <View style={styles.container}>
@@ -39,7 +44,7 @@ const SignIn = ({ navigation }: NativeStackScreenProps<SignInStackParamList, 'Si
             <TextInput style={styles.inputComponent} placeholder='password' onFocus={() => setInputActive(true)} ref={passRef} />
           </View>
           <View>
-            <TouchableOpacity style={styles.signInButtonContainer}>
+            <TouchableOpacity style={styles.signInButtonContainer} onPress={goToHome}>
               <Text style={styles.signInButtonTitle}>Sign In</Text>
             </TouchableOpacity>
           </View>
@@ -50,7 +55,7 @@ const SignIn = ({ navigation }: NativeStackScreenProps<SignInStackParamList, 'Si
           </View>
         </View>
         <View style={[styles.voidContainer, { marginBottom: inputActive ? '30%' : '5%' }]}>
-          <TouchableOpacity style={[styles.signUpButtonContainer, { borderWidth: 0 }]}>
+          <TouchableOpacity style={[styles.signUpButtonContainer, { borderWidth: 0 }]} onPress={goToHome}>
             <Text style={styles.signUpButtonTitle}>Play as guest</Text>
           </TouchableOpacity>
         </View>
