@@ -1,15 +1,16 @@
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import { GameCard } from '../common/components/game-card';
+import { ScrollView, StyleSheet } from "react-native";
+
+import { GameCard } from "../common/components/game-card";
 
 export enum GameStateEnum {
-  active = 'active',
-  finished = 'finished',
-};
+  active = "active",
+  finished = "finished",
+}
 
 export enum GameRequestedByEnum {
-  player = 'player',
-  app = 'app',
-};
+  player = "player",
+  app = "app",
+}
 
 export type Game = {
   id: string;
@@ -17,25 +18,25 @@ export type Game = {
   timeSpent: number;
   attemptsLeft: number;
   gameRequestedBy: GameRequestedByEnum;
-}
+};
 
 const games: Game[] = [
   {
-    id: '1',
+    id: "1",
     state: GameStateEnum.active,
     timeSpent: 123,
     attemptsLeft: 3,
     gameRequestedBy: GameRequestedByEnum.app,
   },
   {
-    id: '2',
+    id: "2",
     state: GameStateEnum.active,
     timeSpent: 321,
     attemptsLeft: 2,
     gameRequestedBy: GameRequestedByEnum.app,
   },
   {
-    id: '3',
+    id: "3",
     state: GameStateEnum.active,
     timeSpent: 223,
     attemptsLeft: 3,
@@ -44,22 +45,24 @@ const games: Game[] = [
 ];
 
 export const GameList = () => {
-
   return (
-    <ScrollView style={styles.scrollViewStyle} contentContainerStyle={styles.contentContainer}>
+    <ScrollView
+      style={styles.scrollViewStyle}
+      contentContainerStyle={styles.contentContainer}
+    >
       {games.map((game) => (
         <GameCard key={game.id} game={game} />
       ))}
     </ScrollView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   scrollViewStyle: {
     flex: 1,
-    width: '100%',
+    width: "100%",
   },
   contentContainer: {
-    alignItems: 'center',
-  }
+    alignItems: "center",
+  },
 });
