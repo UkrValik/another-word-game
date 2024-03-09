@@ -11,9 +11,9 @@ import {
 
 import { SignInStackParamList } from "../navigation/sign-in-stack";
 
-const SignIn = ({
-  navigation,
-}: NativeStackScreenProps<SignInStackParamList, "SignIn">) => {
+type Props = NativeStackScreenProps<SignInStackParamList, "SignIn">;
+
+const SignIn = ({ navigation }: Props) => {
   const [inputActive, setInputActive] = useState(false);
 
   const emailRef = createRef<TextInput>();
@@ -31,7 +31,7 @@ const SignIn = ({
   };
 
   const goToHome = () => {
-    navigation.navigate("Home");
+    navigation.navigate("HomeStack");
     setInputActive(false);
   };
 

@@ -5,9 +5,10 @@ import { Game, GameRequestedByEnum } from "../types";
 
 interface Props {
   game: Game;
+  navigateToGame: (game: Game) => void;
 }
 
-export const GameCard = ({ game }: Props) => {
+export const GameCard = ({ game, navigateToGame }: Props) => {
   const calculateTimeSpent = (timeSpent: number) => {
     const minutes = Math.floor(timeSpent / 60);
     const seconds = timeSpent % 60;
@@ -19,7 +20,10 @@ export const GameCard = ({ game }: Props) => {
   };
 
   return (
-    <TouchableOpacity style={styles.container}>
+    <TouchableOpacity
+      style={styles.container}
+      onPress={() => navigateToGame(game)}
+    >
       {game.gameRequestedBy === GameRequestedByEnum.app && (
         <View style={styles.titleWrapper}>
           <Text style={styles.titleLabel}>Game {game.id}</Text>
@@ -33,7 +37,8 @@ export const GameCard = ({ game }: Props) => {
         </View>
         <View style={styles.labelWrapper}>
           <Text style={styles.label}>
-            Attempts Left: {game.attemptsLeft.toString()}
+            Attempts Left: {game.attemptsLeft.toString()} /{" "}
+            {game.attemptsCount.toString()}
           </Text>
         </View>
       </View>
