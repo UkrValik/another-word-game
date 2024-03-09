@@ -1,24 +1,7 @@
 import { ScrollView, StyleSheet } from "react-native";
 
 import { GameCard } from "../common/components/game-card";
-
-export enum GameStateEnum {
-  active = "active",
-  finished = "finished",
-}
-
-export enum GameRequestedByEnum {
-  player = "player",
-  app = "app",
-}
-
-export type Game = {
-  id: string;
-  state: GameStateEnum;
-  timeSpent: number;
-  attemptsLeft: number;
-  gameRequestedBy: GameRequestedByEnum;
-};
+import { Game, GameRequestedByEnum, GameStateEnum } from "../common/types";
 
 const games: Game[] = [
   {

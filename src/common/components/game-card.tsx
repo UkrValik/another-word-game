@@ -1,7 +1,7 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import colors from "../../../assets/colors.json";
-import { Game, GameRequestedByEnum } from "../../home/game-list";
+import { Game, GameRequestedByEnum } from "../types";
 
 interface Props {
   game: Game;
