@@ -31,6 +31,7 @@ export const GuessAttemptItem = forwardRef<TextInput, Props>(
             editable={activeAttempt}
             contextMenuHidden={activeAttempt}
             value={typeof attempt === "object" ? attempt.word[index] : ""}
+            autoCapitalize="characters"
             ref={(element: TextInput) => {
               if (activeAttempt) {
                 innerRef.current = element;
