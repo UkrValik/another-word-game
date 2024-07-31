@@ -14,9 +14,6 @@
       "configurations": {
         "development": {
           "buildTarget": "account:build:development"
-        },
-        "production": {
-          "buildTarget": "account:build:production"
         }
       }
     }
