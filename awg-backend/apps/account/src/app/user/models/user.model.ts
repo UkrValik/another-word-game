@@ -3,10 +3,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IUser, UserRole } from '@awg-backend/interfaces';
 
 @Schema()
-export class User extends Document implements IUser {
-  @Prop()
-  _id?: string;
-  
+export class User extends Document<string> implements IUser {
   @Prop()
   displayName?: string;
 
