@@ -11,6 +11,9 @@ export namespace AccountRegister {
     password: string;
 
     @IsString()
+    userName: string;
+
+    @IsString()
     @IsOptional()
     displayName?: string;
   }

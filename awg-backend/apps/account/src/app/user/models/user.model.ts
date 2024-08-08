@@ -8,6 +8,9 @@ export class User extends Document<string> implements IUser {
   displayName?: string;
 
   @Prop({ required: true })
+  userName: string;
+
+  @Prop({ required: true })
   email: string;
 
   @Prop({ required: true })
