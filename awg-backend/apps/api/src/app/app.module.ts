@@ -8,6 +8,7 @@ import { getJWTConfig } from './configs/jwt.config';
 import { PassportModule } from '@nestjs/passport';
 import { UserController } from './controllers/user.controller';
 import { VocabularyController } from './controllers/vocabulary.controller';
+import { GameController } from './controllers/game.controller';
 
 
 @Module({
@@ -17,7 +18,7 @@ import { VocabularyController } from './controllers/vocabulary.controller';
     JwtModule.registerAsync(getJWTConfig()),
     PassportModule,
   ],
-  controllers: [AuthController, UserController, VocabularyController],
+  controllers: [AuthController, UserController, VocabularyController, GameController],
   providers: [],
 })
 export class AppModule {}
