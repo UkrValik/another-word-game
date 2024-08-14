@@ -6,6 +6,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { getMongoConfig } from './configs/mongo.config';
 import { RMQModule } from 'nestjs-rmq';
 import { getRMQConfig } from './configs/rmq.config';
+import { UserService } from './user/user.service';
+import { UserQueries } from './user/user.queries';
 
 @Module({
   imports: [
@@ -14,7 +16,7 @@ import { getRMQConfig } from './configs/rmq.config';
     RMQModule.forRootAsync(getRMQConfig()),
     UserModule,
     AuthModule],
-  controllers: [],
-  providers: [],
+  controllers: [UserQueries],
+  providers: [UserService],
 })
 export class AppModule {}

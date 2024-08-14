@@ -8,6 +8,9 @@ export namespace GameCreate {
     
     @IsString()
     word: string;
+
+    @IsString()
+    playerId: string;
     
     @IsNumber()
     length: number;
@@ -24,6 +27,7 @@ export namespace GameCreate {
 
   export class Response {
     _id?: string;
+    playerId: string;
     word: string;
     length: number;
     gameLevel: GameLevel;

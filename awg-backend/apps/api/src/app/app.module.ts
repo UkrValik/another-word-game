@@ -9,6 +9,7 @@ import { PassportModule } from '@nestjs/passport';
 import { UserController } from './controllers/user.controller';
 import { VocabularyController } from './controllers/vocabulary.controller';
 import { GameController } from './controllers/game.controller';
+import { JwtStrategy } from './strategies/jwt.strategy';
 
 
 @Module({
@@ -19,6 +20,6 @@ import { GameController } from './controllers/game.controller';
     PassportModule,
   ],
   controllers: [AuthController, UserController, VocabularyController, GameController],
-  providers: [],
+  providers: [JwtStrategy],
 })
 export class AppModule {}

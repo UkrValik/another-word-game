@@ -4,6 +4,9 @@ import { IsString, IsNumber, IsEnum } from 'class-validator';
 export class CreateGameDto {
   @IsString()
   word: string;
+
+  @IsString()
+  playerId: string;
   
   @IsNumber()
   length: number;

@@ -3,6 +3,7 @@ import { AttemptEntity } from './attempt.entity';
 
 export class GameEntity implements IGame {
   _id?: string;
+  playerId: string;
   word: string;
   length: number;
   gameLevel: GameLevel;
@@ -14,6 +15,7 @@ export class GameEntity implements IGame {
 
   constructor(game: IGame) {
     this._id = game._id;
+    this.playerId = game.playerId;
     this.word = game.word;
     this.length = game.length;
     this.gameLevel = game.gameLevel;

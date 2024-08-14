@@ -11,6 +11,7 @@ export class GameService {
 
   async createGame(game: GameCreate.Request) {
     const newGameEntity = new GameEntity({
+      playerId: game.playerId,
       word: game.word,
       length: game.length,
       gameLevel: game.gameLevel,
@@ -19,8 +20,6 @@ export class GameService {
       attempts: [],
     });
     const newGame = await this.gameRepository.createGame(newGameEntity);
-    console.log(newGameEntity);
-    console.log(newGame);
     return newGame;
   }
 }
