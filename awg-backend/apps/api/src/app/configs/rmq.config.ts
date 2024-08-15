@@ -14,6 +14,6 @@ export const getRMQConfig = (): IRMQServiceAsyncOptions => ({
       }
     ],
     prefetchCount: 32,
-    serviceName: 'awg-account',
+    serviceName: 'awg-api',
   })
 });

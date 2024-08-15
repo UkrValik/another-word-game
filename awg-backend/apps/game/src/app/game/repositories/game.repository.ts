@@ -21,4 +21,14 @@ export class GameRepository {
     const updatedGame = await this.gameModel.updateOne({ _id: game._id }, game).exec();
     return updatedGame;
   }
+
+  async findById(_id: string) {
+    const game = await this.gameModel.findOne({ _id }).exec();
+    return game;
+  }
+
+  async findByUser(playerId: string) {
+    const games = await this.gameModel.find({ playerId }).exec();
+    return games;
+  }
 }

@@ -22,4 +22,12 @@ export class GameService {
     const newGame = await this.gameRepository.createGame(newGameEntity);
     return newGame;
   }
+
+  async findById(_id: string) {
+    return this.gameRepository.findById(_id);
+  }
+
+  async findByUser(playerId: string) {
+    return this.gameRepository.findByUser(playerId);
+  }
 }

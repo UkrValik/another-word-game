@@ -1,4 +1,4 @@
-import { UserRole } from "@awg-backend/interfaces";
+import { IUser } from "@awg-backend/interfaces";
 import { IsString } from "class-validator";
 
 export namespace AccountGetInfo {
@@ -10,10 +10,6 @@ export namespace AccountGetInfo {
   }
 
   export class Response {
-    _id: string;
-    email: string;
-    userName: string;
-    role: UserRole;
-    displayName?: string;
+    user: IUser;
   }
 }

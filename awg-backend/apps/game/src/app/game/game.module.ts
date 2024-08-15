@@ -5,6 +5,7 @@ import { Attempt, AttemptSchema } from './models/attempt.model';
 import { GameRepository } from './repositories/game.repository';
 import { GameService } from './game.service';
 import { GameCommands } from './game.commands';
+import { GameQueries } from './game.queries';
 
 @Module({
   imports: [
@@ -13,7 +14,7 @@ import { GameCommands } from './game.commands';
       { name: Attempt.name, schema: AttemptSchema },
     ]),
   ],
-  controllers: [GameCommands],
+  controllers: [GameCommands, GameQueries],
   providers: [GameRepository, GameService],
 })
 export class GameModule {}
