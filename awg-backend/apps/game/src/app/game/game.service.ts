@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { GameRepository } from './repositories/game.repository';
-import { GameCreate } from '@awg-backend/contracts';
+import { AttemptCreate, GameCreate } from '@awg-backend/contracts';
 import { GameEntity } from './entities/game.entity';
+import { AttemptEntity } from './entities/attempt.entity';
 
 @Injectable()
 export class GameService {
@@ -29,5 +30,20 @@ export class GameService {
 
   async findByUser(playerId: string) {
     return this.gameRepository.findByUser(playerId);
+  }
+
+  async addAttempt({ gameId, attempt }: AttemptCreate.Request) {
+    const game = await this.gameRepository.findById(gameId);
+    if (!game) {
+      throw new Error('Game not found');
+    }
+    const newAttemptEntity = new AttemptEntity({
+      attemptWord: attempt.attemptWord,
+      attemptNumber: attempt.attemptNumber,
+      duration: attempt.duration,
+    });
+    const gameEntity = new GameEntity(game);
+    gameEntity.addAttempt(newAttemptEntity);
+    return this.gameRepository.updateGame(gameEntity);
   }
 }

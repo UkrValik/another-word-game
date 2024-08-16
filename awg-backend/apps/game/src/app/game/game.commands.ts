@@ -1,7 +1,7 @@
 import { Body, Controller } from '@nestjs/common';
 import { GameService } from './game.service';
 import { RMQRoute, RMQValidate } from 'nestjs-rmq';
-import { GameCreate } from '@awg-backend/contracts';
+import { AttemptCreate, GameCreate } from '@awg-backend/contracts';
 
 @Controller()
 export class GameCommands {
@@ -13,5 +13,12 @@ export class GameCommands {
   @RMQRoute(GameCreate.topic)
   async createGame(@Body() game: GameCreate.Request): Promise<GameCreate.Response> {
     return this.gameService.createGame(game);
+  }
+
+  @RMQValidate()
+  @RMQRoute(AttemptCreate.topic)
+  async createAttempt(@Body() attemptRequest: AttemptCreate.Request): Promise<AttemptCreate.Response> {
+    const game = await this.gameService.addAttempt(attemptRequest);
+    return { game };
   }
 }

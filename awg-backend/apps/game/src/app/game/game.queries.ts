@@ -1,7 +1,7 @@
-import { Body, Controller } from "@nestjs/common";
-import { GameService } from "./game.service";
-import { RMQRoute, RMQValidate } from "nestjs-rmq";
-import { GameGetById, GameGetByUser } from "@awg-backend/contracts";
+import { Body, Controller } from '@nestjs/common';
+import { GameService } from './game.service';
+import { RMQRoute, RMQValidate } from 'nestjs-rmq';
+import { GameGetById, GameGetByUser } from '@awg-backend/contracts';
 
 @Controller()
 export class GameQueries {

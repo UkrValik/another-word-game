@@ -1,9 +1,10 @@
-import { BadRequestException, Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, NotFoundException, Param, Post, UseGuards } from '@nestjs/common';
 import { RMQService } from 'nestjs-rmq';
 import { CreateGameDto } from '../dtos/create-game.dto';
-import { GameCreate, GameGetById, GameGetByUser } from '@awg-backend/contracts';
+import { AttemptCreate, GameCreate, GameGetById, GameGetByUser } from '@awg-backend/contracts';
 import { JWTAuthGuard } from '../guards/jwt.guard';
 import { UserId } from '../guards/user.decorator';
+import { AddAttemptDto } from '../dtos/add-attempt.dto';
 
 @UseGuards(JWTAuthGuard)
 @Controller('game')
@@ -19,6 +20,17 @@ export class GameController {
     } catch (e) {
       if (e instanceof Error) {
         throw new BadRequestException(e.message);
+      }
+    }
+  }
+
+  @Post('add-attempt')
+  async addAttempt(@Body() dto: AddAttemptDto) {
+    try {
+      return this.rmqService.send<AttemptCreate.Request, AttemptCreate.Response>(AttemptCreate.topic, dto);
+    } catch (e) {
+      if (e instanceof Error) {
+        throw new NotFoundException(e.message);
       }
     }
   }

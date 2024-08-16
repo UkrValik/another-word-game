@@ -1,7 +1,6 @@
 import { InjectModel } from '@nestjs/mongoose';
 import { Game } from '../models/game.model';
 import { Model } from 'mongoose';
-import { Attempt } from '../models/attempt.model';
 import { Injectable } from '@nestjs/common';
 import { GameEntity } from '../entities/game.entity';
 
@@ -9,7 +8,6 @@ import { GameEntity } from '../entities/game.entity';
 export class GameRepository {
   constructor(
     @InjectModel(Game.name) private readonly gameModel: Model<Game>,
-    @InjectModel(Attempt.name) private readonly attemptModel: Model<Attempt>,
   ) {}
 
   async createGame(game: GameEntity) {
@@ -18,7 +16,8 @@ export class GameRepository {
   }
 
   async updateGame(game: GameEntity) {
-    const updatedGame = await this.gameModel.updateOne({ _id: game._id }, game).exec();
+    await this.gameModel.updateOne({ _id: game._id }, game).exec();
+    const updatedGame = await this.gameModel.findOne({ _id: game._id }).exec();
     return updatedGame;
   }
 
