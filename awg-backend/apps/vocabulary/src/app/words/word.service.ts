@@ -15,4 +15,9 @@ export class WordService {
     }));
     return this.wordRepository.createMany(words);
   }
+
+  public async getRandomWordByLength(length: number) {
+    const word = await this.wordRepository.getRandomWordByLength(length);
+    return word[0];
+  }
 }

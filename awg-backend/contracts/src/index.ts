@@ -3,6 +3,7 @@ export * from './lib/account/account.register';
 export * from './lib/account/account.get-info';
 
 export * from './lib/vocabulary/vocabulary.new-words';
+export * from './lib/vocabulary/vocabulary.random-by-length';
 
 export * from './lib/game/game.create';
 export * from './lib/game/game.get-by-id';

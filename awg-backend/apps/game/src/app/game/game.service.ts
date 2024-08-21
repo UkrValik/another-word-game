@@ -3,6 +3,7 @@ import { GameRepository } from './repositories/game.repository';
 import { AttemptCreate, GameCreate } from '@awg-backend/contracts';
 import { GameEntity } from './entities/game.entity';
 import { AttemptEntity } from './entities/attempt.entity';
+import { IWord } from '@awg-backend/interfaces';
 
 @Injectable()
 export class GameService {
@@ -10,10 +11,10 @@ export class GameService {
     private readonly gameRepository: GameRepository,
   ) {}
 
-  async createGame(game: GameCreate.Request) {
+  async createGame(game: GameCreate.Request, word: IWord) {
     const newGameEntity = new GameEntity({
       playerId: game.playerId,
-      word: game.word,
+      word: word.value,
       length: game.length,
       gameLevel: game.gameLevel,
       createdBy: game.createdBy,

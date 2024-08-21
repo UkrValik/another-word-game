@@ -7,9 +7,6 @@ export namespace GameCreate {
   export class Request {
     
     @IsString()
-    word: string;
-
-    @IsString()
     playerId: string;
     
     @IsNumber()

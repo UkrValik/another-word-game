@@ -3,6 +3,7 @@ import { Word } from '../models/word.model';
 import { Model } from 'mongoose';
 import { WordEntity } from '../entities/word.entity';
 import { Injectable } from '@nestjs/common';
+import { IWord } from '@awg-backend/interfaces';
 
 @Injectable()
 export class WordRepository {
@@ -24,5 +25,12 @@ export class WordRepository {
       newWords.push(newWord);
     }
     return newWords;
+  }
+
+  async getRandomWordByLength(length: number) {
+    return this.wordModel.aggregate<IWord>([
+      { $match: { length } },
+      { $sample: { size: 1 } },
+    ]).exec();
   }
 }
