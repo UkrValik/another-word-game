@@ -8,13 +8,21 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
+import { useDispatch } from "react-redux";
 
+import { AppDispatch } from "../../store";
+import { userSignUp } from "../../store/user.slice";
 import { SignInStackParamList } from "../navigation/sign-in-stack";
 
 type Props = NativeStackScreenProps<SignInStackParamList, "SignUp">;
 
 const SignUp = ({ navigation }: Props) => {
+  const dispatch = useDispatch<AppDispatch>();
+
   const [inputActive, setInputActive] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [repPass, setRepPass] = useState("");
 
   const emailRef = createRef<TextInput>();
   const passRef = createRef<TextInput>();
@@ -33,8 +41,9 @@ const SignUp = ({ navigation }: Props) => {
   };
 
   const goToHome = () => {
-    navigation.navigate("HomeStack");
-    setInputActive(false);
+    if (password === repPass) {
+      dispatch(userSignUp({ email, password }));
+    }
   };
 
   return (
@@ -51,6 +60,8 @@ const SignUp = ({ navigation }: Props) => {
             <TextInput
               style={styles.inputComponent}
               placeholder="email"
+              value={email}
+              onChangeText={(text) => setEmail(text)}
               onFocus={() => setInputActive(true)}
               ref={emailRef}
             />
@@ -59,6 +70,8 @@ const SignUp = ({ navigation }: Props) => {
             <TextInput
               style={styles.inputComponent}
               placeholder="password"
+              value={password}
+              onChangeText={(text) => setPassword(text)}
               onFocus={() => setInputActive(true)}
               ref={passRef}
             />
@@ -67,6 +80,8 @@ const SignUp = ({ navigation }: Props) => {
             <TextInput
               style={styles.inputComponent}
               placeholder="repeat password"
+              value={repPass}
+              onChangeText={(text) => setRepPass(text)}
               onFocus={() => setInputActive(true)}
               ref={repPassRef}
             />

@@ -52,6 +52,18 @@ export const userSignIn = createAsyncThunk(
   },
 );
 
+export const userSignUp = createAsyncThunk(
+  "user/register",
+  async (body: { email: string; password: string }) => {
+    const response = await fetch(baseUrl + "auth/register", {
+      method: "POST",
+      headers,
+      body: JSON.stringify(body),
+    });
+    return (await response.json()) as { user: IUser; access_token: string };
+  },
+);
+
 export const userSlice = createSlice({
   name: "user",
   initialState,
@@ -62,14 +74,34 @@ export const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      // LOGIN states
       .addCase(userSignIn.pending, (state) => {
         state.authLoading = true;
+        state.authError = "";
       })
       .addCase(userSignIn.fulfilled, (state, action) => {
         state.accessToken = action.payload.access_token;
         state.authLoading = false;
+        state.authError = "";
       })
       .addCase(userSignIn.rejected, (state, action) => {
+        console.log(action.error.message);
+        state.authLoading = false;
+        state.authError = action.error.message;
+      })
+      // REGISTER states
+      .addCase(userSignUp.pending, (state) => {
+        state.authLoading = true;
+        state.authError = "";
+      })
+      .addCase(userSignUp.fulfilled, (state, action) => {
+        console.log(action.payload);
+        state.accessToken = action.payload.access_token;
+        state.user = { ...action.payload.user };
+        state.authError = "";
+        state.authLoading = false;
+      })
+      .addCase(userSignUp.rejected, (state, action) => {
         console.log(action.error.message);
         state.authLoading = false;
         state.authError = action.error.message;

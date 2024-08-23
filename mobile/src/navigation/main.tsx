@@ -11,7 +11,6 @@ const Stack = createNativeStackNavigator();
 
 export const Main = () => {
   const token = useSelector(selectToken);
-  console.log(token);
 
   return (
     <NavigationContainer>
