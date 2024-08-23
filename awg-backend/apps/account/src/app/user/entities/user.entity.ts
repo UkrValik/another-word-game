@@ -1,10 +1,10 @@
-import { IUser, UserRole } from "@awg-backend/interfaces";
-import { compare, genSalt, hash } from "bcryptjs";
+import { IUser, UserRole } from '@awg-backend/interfaces';
+import { compare, genSalt, hash } from 'bcryptjs';
 
 export class UserEntity implements IUser {
   _id?: string;
   displayName?: string;
-  userName: string;
+  userName?: string;
   email: string;
   passwordHash: string;
   role: UserRole;

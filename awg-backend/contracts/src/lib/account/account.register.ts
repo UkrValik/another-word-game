@@ -1,3 +1,4 @@
+import { IUser } from '@awg-backend/interfaces';
 import { IsEmail, IsOptional, IsString } from 'class-validator';
 
 export namespace AccountRegister {
@@ -11,7 +12,8 @@ export namespace AccountRegister {
     password: string;
 
     @IsString()
-    userName: string;
+    @IsOptional()
+    userName?: string;
 
     @IsString()
     @IsOptional()
@@ -19,6 +21,7 @@ export namespace AccountRegister {
   }
 
   export class Response {
-    email: string;
+    user: IUser;
+    access_token: string;
   }
 }

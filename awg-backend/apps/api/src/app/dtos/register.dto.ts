@@ -8,7 +8,8 @@ export class RegisterDto {
   password: string;
 
   @IsString()
-  userName: string;
+  @IsOptional()
+  userName?: string;
 
   @IsString()
   @IsOptional()
