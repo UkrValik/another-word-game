@@ -1,11 +1,15 @@
 import { SafeAreaView } from "react-native";
+import { Provider } from "react-redux";
 
-import { SignInStack } from "./src/navigation/sign-in-stack";
+import { Main } from "./src/navigation/main";
+import { store } from "./store";
 
 export default function App() {
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <SignInStack />
-    </SafeAreaView>
+    <Provider store={store}>
+      <SafeAreaView style={{ flex: 1 }}>
+        <Main />
+      </SafeAreaView>
+    </Provider>
   );
 }

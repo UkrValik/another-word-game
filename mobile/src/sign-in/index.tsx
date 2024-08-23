@@ -8,13 +8,20 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
+import { useDispatch } from "react-redux";
 
+import { AppDispatch } from "../../store";
+import { userSignIn } from "../../store/user.slice";
 import { SignInStackParamList } from "../navigation/sign-in-stack";
 
 type Props = NativeStackScreenProps<SignInStackParamList, "SignIn">;
 
 const SignIn = ({ navigation }: Props) => {
+  const dispatch = useDispatch<AppDispatch>();
+
   const [inputActive, setInputActive] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const emailRef = createRef<TextInput>();
   const passRef = createRef<TextInput>();
@@ -31,7 +38,7 @@ const SignIn = ({ navigation }: Props) => {
   };
 
   const goToHome = () => {
-    navigation.navigate("HomeStack");
+    dispatch(userSignIn({ email, password }));
     setInputActive(false);
   };
 
@@ -49,6 +56,8 @@ const SignIn = ({ navigation }: Props) => {
             <TextInput
               style={styles.inputComponent}
               placeholder="email"
+              value={email}
+              onChangeText={(text) => setEmail(text)}
               onFocus={() => setInputActive(true)}
               ref={emailRef}
             />
@@ -57,6 +66,8 @@ const SignIn = ({ navigation }: Props) => {
             <TextInput
               style={styles.inputComponent}
               placeholder="password"
+              value={password}
+              onChangeText={(text) => setPassword(text)}
               onFocus={() => setInputActive(true)}
               ref={passRef}
             />
