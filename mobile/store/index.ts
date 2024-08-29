@@ -1,11 +1,13 @@
 import type { Action, ThunkAction } from "@reduxjs/toolkit";
 import { configureStore } from "@reduxjs/toolkit";
 
+import gameReducer from "./game.slice";
 import userReducer from "./user.slice";
 
 export const store = configureStore({
   reducer: {
     user: userReducer,
+    game: gameReducer,
   },
 });
 
