@@ -1,15 +1,15 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
-import { RootState } from ".";
+import { RootState } from '.';
 
 const baseUrl = process.env.EXPO_PUBLIC_BASE_URL;
 const headers = {
-  "Content-Type": "application/json",
+  'Content-Type': 'application/json',
 };
 
 export enum UserRole {
-  Regular = "Regular",
-  Admin = "Admin",
+  Regular = 'Regular',
+  Admin = 'Admin',
 }
 
 export interface IUser {
@@ -29,22 +29,23 @@ export interface IUserSlice {
 
 const initialState: IUserSlice = {
   user: {
-    _id: "",
-    displayName: "",
-    userName: "",
-    email: "",
+    _id: '',
+    displayName: '',
+    userName: '',
+    email: '',
     role: UserRole.Regular,
   },
-  accessToken: "",
+  accessToken:
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2YmNhODA3ZDVkYTMzMjJiODJkZmJlYiIsImlhdCI6MTcyNDkyNDM0M30.p4yud5ejTH4kht9cYbs6nwCAULb49f-2FUVGnRbh_JA',
   authLoading: false,
-  authError: "",
+  authError: '',
 };
 
 export const userSignIn = createAsyncThunk(
-  "user/login",
+  'user/login',
   async (body: { email: string; password: string }) => {
-    const user = await fetch(baseUrl + "auth/login", {
-      method: "POST",
+    const user = await fetch(baseUrl + 'auth/login', {
+      method: 'POST',
       headers,
       body: JSON.stringify(body),
     });
@@ -53,10 +54,10 @@ export const userSignIn = createAsyncThunk(
 );
 
 export const userSignUp = createAsyncThunk(
-  "user/register",
+  'user/register',
   async (body: { email: string; password: string }) => {
-    const response = await fetch(baseUrl + "auth/register", {
-      method: "POST",
+    const response = await fetch(baseUrl + 'auth/register', {
+      method: 'POST',
       headers,
       body: JSON.stringify(body),
     });
@@ -65,11 +66,11 @@ export const userSignUp = createAsyncThunk(
 );
 
 export const userSlice = createSlice({
-  name: "user",
+  name: 'user',
   initialState,
   reducers: {
     logout: (state) => {
-      state.accessToken = "";
+      state.accessToken = '';
     },
   },
   extraReducers: (builder) => {
@@ -77,28 +78,27 @@ export const userSlice = createSlice({
       // LOGIN states
       .addCase(userSignIn.pending, (state) => {
         state.authLoading = true;
-        state.authError = "";
+        state.authError = '';
       })
       .addCase(userSignIn.fulfilled, (state, action) => {
         state.accessToken = action.payload.access_token;
         state.authLoading = false;
-        state.authError = "";
+        state.authError = '';
       })
       .addCase(userSignIn.rejected, (state, action) => {
-        console.log(action.error.message);
+        console.log(action.error);
         state.authLoading = false;
         state.authError = action.error.message;
       })
       // REGISTER states
       .addCase(userSignUp.pending, (state) => {
         state.authLoading = true;
-        state.authError = "";
+        state.authError = '';
       })
       .addCase(userSignUp.fulfilled, (state, action) => {
-        console.log(action.payload);
         state.accessToken = action.payload.access_token;
         state.user = { ...action.payload.user };
-        state.authError = "";
+        state.authError = '';
         state.authLoading = false;
       })
       .addCase(userSignUp.rejected, (state, action) => {
