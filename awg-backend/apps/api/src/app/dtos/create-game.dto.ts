@@ -6,6 +6,9 @@ export class CreateGameDto {
   word: string;
 
   @IsString()
+  name: string;
+
+  @IsString()
   playerId: string;
   
   @IsNumber()
