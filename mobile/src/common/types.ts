@@ -1,11 +1,11 @@
 export enum GameStateEnum {
-  active = "active",
-  finished = "finished",
+  active = 'active',
+  finished = 'finished',
 }
 
 export enum GameRequestedByEnum {
-  player = "player",
-  app = "app",
+  player = 'player',
+  app = 'app',
 }
 
 export type Game = {

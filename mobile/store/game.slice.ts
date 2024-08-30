@@ -72,12 +72,20 @@ export const createGame = createAsyncThunk('game/new', async ({ game, token }: I
   return (await response.json()) as IGame;
 });
 
+export const getUserGames = createAsyncThunk('game/all', async (token: string) => {
+  const response = await fetch(baseUrl + 'game/all', {
+    headers: configHeaders(token),
+  });
+  return (await response.json()) as { games: IGame[] };
+});
+
 export const gameSlice = createSlice({
   name: 'game',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
+      // create game flow
       .addCase(createGame.pending, (state) => {
         state.loadingGame = true;
         state.gameError = '';
@@ -88,6 +96,21 @@ export const gameSlice = createSlice({
         state.activeGames.unshift(action.payload);
       })
       .addCase(createGame.rejected, (state, action) => {
+        state.loadingGame = false;
+        state.gameError = action.error.message;
+      })
+      // get all user games flow
+      .addCase(getUserGames.pending, (state) => {
+        state.loadingGame = true;
+        state.gameError = '';
+      })
+      .addCase(getUserGames.fulfilled, (state, action) => {
+        state.loadingGame = false;
+        state.gameError = '';
+        state.activeGames = action.payload.games.filter((game) => !game.finished);
+        state.finishedGames = action.payload.games.filter((game) => game.finished);
+      })
+      .addCase(getUserGames.rejected, (state, action) => {
         state.loadingGame = false;
         state.gameError = action.error.message;
       });
