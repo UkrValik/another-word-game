@@ -28,9 +28,10 @@ export class WordRepository {
   }
 
   async getRandomWordByLength(length: number) {
-    return this.wordModel.aggregate<IWord>([
+    const result = await this.wordModel.aggregate<IWord>([
       { $match: { length } },
       { $sample: { size: 1 } },
     ]).exec();
+    return result[0];
   }
 }

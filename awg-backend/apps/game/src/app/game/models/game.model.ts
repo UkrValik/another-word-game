@@ -6,6 +6,9 @@ import { Attempt, AttemptSchema } from './attempt.model';
 @Schema()
 export class Game extends Document<string> implements IGame {
   @Prop({ required: true })
+  name: string;
+  
+  @Prop({ required: true })
   playerId: string;
 
   @Prop({ required: true })

@@ -18,6 +18,6 @@ export class WordService {
 
   public async getRandomWordByLength(length: number) {
     const word = await this.wordRepository.getRandomWordByLength(length);
-    return word[0];
+    return word;
   }
 }

@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller } from '@nestjs/common';
+import { Body, Controller } from '@nestjs/common';
 import { GameService } from './game.service';
 import { RMQRoute, RMQService, RMQValidate } from 'nestjs-rmq';
 import { AttemptCreate, GameCreate, VocabularyRandomByLength } from '@awg-backend/contracts';

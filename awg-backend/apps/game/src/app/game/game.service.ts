@@ -13,6 +13,7 @@ export class GameService {
 
   async createGame(game: GameCreate.Request, word: IWord) {
     const newGameEntity = new GameEntity({
+      name: game.name,
       playerId: game.playerId,
       word: word.value,
       length: game.length,

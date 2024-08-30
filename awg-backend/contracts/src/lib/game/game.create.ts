@@ -8,6 +8,9 @@ export namespace GameCreate {
     
     @IsString()
     playerId: string;
+
+    @IsString()
+    name: string;
     
     @IsNumber()
     length: number;

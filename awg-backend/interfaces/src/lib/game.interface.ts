@@ -8,6 +8,7 @@ export enum GameLevel {
 
 export interface IGame {
   _id?: string;
+  name: string;
   playerId: string;
   word: string;
   length: number;
