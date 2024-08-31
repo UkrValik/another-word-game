@@ -16,6 +16,6 @@ export interface IGame {
   createdBy: string;    // user._id or 'game'
   started: Date;
   finished?: Date;
-  duration?: number;
+  duration: number;
   attempts: IAttempt[];
 }

@@ -34,4 +34,9 @@ export class WordRepository {
     ]).exec();
     return result[0];
   }
+
+  async findByValue(value: string) {
+    const word = await this.wordModel.findOne({ value }).exec();
+    return word;
+  }
 }

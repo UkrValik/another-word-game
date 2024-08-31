@@ -20,6 +20,7 @@ export class GameService {
       gameLevel: game.gameLevel,
       createdBy: game.createdBy,
       started: new Date(game.started),
+      duration: 0,
       attempts: [],
     });
     const newGame = await this.gameRepository.createGame(newGameEntity);
@@ -46,6 +47,9 @@ export class GameService {
     });
     const gameEntity = new GameEntity(game);
     gameEntity.addAttempt(newAttemptEntity);
+    if (newAttemptEntity.attemptWord === gameEntity.word) {
+      gameEntity.finish();
+    }
     return this.gameRepository.updateGame(gameEntity);
   }
 }

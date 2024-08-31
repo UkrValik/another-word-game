@@ -1,7 +1,7 @@
-import { Body, Controller } from '@nestjs/common';
+import { Body, Controller, NotFoundException } from '@nestjs/common';
 import { GameService } from './game.service';
 import { RMQRoute, RMQService, RMQValidate } from 'nestjs-rmq';
-import { AttemptCreate, GameCreate, VocabularyRandomByLength } from '@awg-backend/contracts';
+import { AttemptCreate, GameCreate, VocabularyRandomByLength, VocabularyWordExists } from '@awg-backend/contracts';
 
 @Controller()
 export class GameCommands {
@@ -20,6 +20,10 @@ export class GameCommands {
   @RMQValidate()
   @RMQRoute(AttemptCreate.topic)
   async createAttempt(@Body() attemptRequest: AttemptCreate.Request): Promise<AttemptCreate.Response> {
+    const { exist } = await this.rmqService.send<VocabularyWordExists.Request, VocabularyWordExists.Response>(VocabularyWordExists.topic, { value: attemptRequest.attempt.attemptWord });
+    if (!exist) {
+      throw new NotFoundException('This word does not exist');
+    }
     const game = await this.gameService.addAttempt(attemptRequest);
     return { game };
   }
