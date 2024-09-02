@@ -20,4 +20,8 @@ export class WordService {
     const word = await this.wordRepository.getRandomWordByLength(length);
     return word;
   }
+
+  public async findByValue(value: string) {
+    return this.wordRepository.findByValue(value);
+  }
 }

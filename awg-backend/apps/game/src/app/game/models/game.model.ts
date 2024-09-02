@@ -29,8 +29,8 @@ export class Game extends Document<string> implements IGame {
   @Prop()
   finished?: Date;
 
-  @Prop()
-  duration?: number;
+  @Prop({ required: true })
+  duration: number;
 
   @Prop({ required: true, type: [AttemptSchema], default: [] })
   attempts: Attempt[];

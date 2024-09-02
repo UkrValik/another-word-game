@@ -11,7 +11,7 @@ export class GameEntity implements IGame {
   createdBy: string;
   started: Date;
   finished?: Date;
-  duration?: number;
+  duration: number;
   attempts: AttemptEntity[];
 
   constructor(game: IGame) {
@@ -23,15 +23,16 @@ export class GameEntity implements IGame {
     this.gameLevel = game.gameLevel;
     this.createdBy = game.createdBy;
     this.started = game.started;
+    this.duration = game.duration;
     this.attempts = game.attempts;
   }
 
-  public finish(finished: Date, duration: number) {
-    this.finished = finished;
-    this.duration = duration;
+  public finish() {
+    this.finished = new Date();
   }
 
   public addAttempt(attempt: AttemptEntity) {
     this.attempts.push(attempt);
+    this.duration += attempt.duration;
   }
 }
