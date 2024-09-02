@@ -13,7 +13,6 @@ export class UserController {
   @UseGuards(JWTAuthGuard)
   @Get('info')
   async getUserInfo(@UserId() userId: string) {
-    const user = this.rmqService.send<AccountGetInfo.Request, AccountGetInfo.Response>(AccountGetInfo.topic, { _id: userId });
-    return user;
+    return await this.rmqService.send<AccountGetInfo.Request, AccountGetInfo.Response>(AccountGetInfo.topic, { _id: userId });
   }
 }

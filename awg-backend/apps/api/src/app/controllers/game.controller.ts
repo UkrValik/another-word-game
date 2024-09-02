@@ -16,7 +16,7 @@ export class GameController {
   @Post('new')
   async startNewGame(@Body() dto: CreateGameDto) {
     try {
-      return this.rmqService.send<GameCreate.Request, GameCreate.Response>(GameCreate.topic, dto);
+      return await this.rmqService.send<GameCreate.Request, GameCreate.Response>(GameCreate.topic, dto);
     } catch (e) {
       if (e instanceof Error) {
         throw new BadRequestException(e.message);
@@ -27,7 +27,7 @@ export class GameController {
   @Post('add-attempt')
   async addAttempt(@Body() dto: AddAttemptDto) {
     try {
-      return this.rmqService.send<AttemptCreate.Request, AttemptCreate.Response>(AttemptCreate.topic, dto);
+      return await this.rmqService.send<AttemptCreate.Request, AttemptCreate.Response>(AttemptCreate.topic, dto);
     } catch (e) {
       if (e instanceof Error) {
         throw new NotFoundException(e.message);
@@ -38,7 +38,7 @@ export class GameController {
   @Get('all')
   async getAllUserGames(@UserId() userId: string) {
     try {
-      return this.rmqService.send<GameGetByUser.Request, GameGetByUser.Response>(GameGetByUser.topic, { userId });
+      return await this.rmqService.send<GameGetByUser.Request, GameGetByUser.Response>(GameGetByUser.topic, { userId });
     } catch (e) {
       if (e instanceof Error) {
         throw new BadRequestException(e.message);
@@ -49,7 +49,7 @@ export class GameController {
   @Get(':id')
   async getGameById(@Param('id') _id: string) {
     try {
-      return this.rmqService.send<GameGetById.Request, GameGetById.Response>(GameGetById.topic, { _id });
+      return await this.rmqService.send<GameGetById.Request, GameGetById.Response>(GameGetById.topic, { _id });
     } catch (e) {
       if (e instanceof Error) {
         throw new BadRequestException(e.message);
