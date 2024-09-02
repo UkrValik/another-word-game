@@ -39,14 +39,18 @@ export interface IGameSlice {
   finishedGames: IGame[];
   activeGames: IGame[];
   loadingGame: boolean;
+  loadingAttempt: boolean;
   gameError?: string;
+  attemptError?: string;
 }
 
 const initialState: IGameSlice = {
   finishedGames: [],
   activeGames: [],
   loadingGame: false,
+  loadingAttempt: false,
   gameError: '',
+  attemptError: '',
 };
 
 export interface ICreateGameBody {
@@ -58,8 +62,19 @@ export interface ICreateGameBody {
   started: string;
 }
 
+export interface ICreateAttemptBody {
+  attemptWord: string;
+  attemptNumber: number;
+  duration: number;
+}
+
 export interface ICreateGameDto {
   game: ICreateGameBody;
+  token: string;
+}
+
+export interface ICreateAttemptDto {
+  attempt: ICreateAttemptBody;
   token: string;
 }
 
@@ -77,6 +92,15 @@ export const getUserGames = createAsyncThunk('game/all', async (token: string) =
     headers: configHeaders(token),
   });
   return (await response.json()) as { games: IGame[] };
+});
+
+export const createAttempt = createAsyncThunk('game/add-attempt', async ({ attempt, token }: ICreateAttemptDto) => {
+  const response = await fetch(baseUrl + 'game/add-attempt', {
+    method: 'POST',
+    headers: configHeaders(token),
+    body: JSON.stringify(attempt),
+  });
+  return (await response.json()) as { game: IGame };
 });
 
 export const gameSlice = createSlice({
@@ -113,11 +137,33 @@ export const gameSlice = createSlice({
       .addCase(getUserGames.rejected, (state, action) => {
         state.loadingGame = false;
         state.gameError = action.error.message;
+      })
+      // create game attempt flow
+      .addCase(createAttempt.pending, (state) => {
+        state.loadingAttempt = true;
+        state.attemptError = '';
+      })
+      .addCase(createAttempt.fulfilled, (state, action) => {
+        state.loadingAttempt = false;
+        const { game } = action.payload;
+        if (game.finished) {
+          state.finishedGames.unshift(game);
+          state.activeGames = state.activeGames.filter((g) => g._id !== game._id);
+        } else {
+          const i = state.activeGames.findIndex((g) => g._id === game._id);
+          state.activeGames[i] = game;
+        }
+      })
+      .addCase(createAttempt.rejected, (state, action) => {
+        state.loadingAttempt = false;
+        state.attemptError = action.error.message;
       });
   },
 });
 
 export const selectActiveGames = (state: RootState) => state.game.activeGames;
 export const selectFinishedGames = (state: RootState) => state.game.finishedGames;
+export const selectAttemptLoading = (state: RootState) => state.game.loadingAttempt;
+export const selectAttemptError = (state: RootState) => state.game.attemptError;
 
 export default gameSlice.reducer;
