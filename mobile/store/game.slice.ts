@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 import { RootState } from '.';
 
@@ -31,7 +31,7 @@ export interface IGame {
   createdBy: string; // user._id or 'game'
   started: Date;
   finished?: Date;
-  duration?: number;
+  duration: number;
   attempts: IAttempt[];
 }
 
@@ -103,10 +103,20 @@ export const createAttempt = createAsyncThunk('game/add-attempt', async ({ attem
   return (await response.json()) as { game: IGame };
 });
 
+export interface AddDurationPayload {
+  gameId: string;
+  duration: number;
+}
+
 export const gameSlice = createSlice({
   name: 'game',
   initialState,
-  reducers: {},
+  reducers: {
+    addDuration: (state, action: PayloadAction<AddDurationPayload>) => {
+      const i = state.activeGames.findIndex((g) => g._id === action.payload.gameId);
+      state.activeGames[i].duration += action.payload.duration;
+    },
+  },
   extraReducers: (builder) => {
     builder
       // create game flow
@@ -131,7 +141,16 @@ export const gameSlice = createSlice({
       .addCase(getUserGames.fulfilled, (state, action) => {
         state.loadingGame = false;
         state.gameError = '';
-        state.activeGames = action.payload.games.filter((game) => !game.finished);
+        action.payload.games.reverse();
+        state.activeGames = action.payload.games.filter((game) => {
+          if (!game.finished) {
+            const localGameCopy = state.activeGames.find((g) => g._id === game._id);
+            if (localGameCopy) {
+              game.duration = localGameCopy.duration > game.duration ? localGameCopy.duration : game.duration;
+            }
+            return game;
+          }
+        });
         state.finishedGames = action.payload.games.filter((game) => game.finished);
       })
       .addCase(getUserGames.rejected, (state, action) => {
@@ -160,6 +179,8 @@ export const gameSlice = createSlice({
       });
   },
 });
+
+export const { addDuration } = gameSlice.actions;
 
 export const selectActiveGames = (state: RootState) => state.game.activeGames;
 export const selectFinishedGames = (state: RootState) => state.game.finishedGames;
