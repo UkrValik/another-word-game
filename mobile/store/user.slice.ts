@@ -45,6 +45,7 @@ const initialState: IUserSlice = {
 };
 
 export const userSignIn = createAsyncThunk('user/login', async (body: { email: string; password: string }) => {
+  console.log(body);
   const loginResponse = await fetch(baseUrl + 'auth/login', {
     method: 'POST',
     headers,
@@ -55,6 +56,7 @@ export const userSignIn = createAsyncThunk('user/login', async (body: { email: s
     headers: configHeaders(access_token),
   });
   const user = await infoResponse.json();
+  console.log(user);
   return { user, access_token };
 });
 

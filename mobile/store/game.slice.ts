@@ -78,6 +78,12 @@ export interface ICreateAttemptDto {
   token: string;
 }
 
+export interface ChangeGameDurationDto {
+  gameId: string;
+  duration: number;
+  token: string;
+}
+
 export const createGame = createAsyncThunk('game/new', async ({ game, token }: ICreateGameDto) => {
   const response = await fetch(baseUrl + 'game/new', {
     method: 'POST',
@@ -102,6 +108,18 @@ export const createAttempt = createAsyncThunk('game/add-attempt', async ({ attem
   });
   return (await response.json()) as { game: IGame };
 });
+
+export const changeGameDuration = createAsyncThunk(
+  'game/change-duration',
+  async ({ gameId, duration, token }: ChangeGameDurationDto) => {
+    const response = await fetch(baseUrl + 'game/change-duration', {
+      method: 'POST',
+      headers: configHeaders(token),
+      body: JSON.stringify({ gameId, duration }),
+    });
+    return await response.json();
+  },
+);
 
 export interface AddDurationPayload {
   gameId: string;

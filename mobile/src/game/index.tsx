@@ -2,12 +2,14 @@ import { useFocusEffect } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useCallback, useRef, useState } from 'react';
 import { StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { GuessAttemptLetters, GuessAttemptLettersMethods } from './guess-attempt-letters';
 import * as colors from '../../assets/colors.json';
 import { AppDispatch } from '../../store';
-import { IAttempt, addDuration } from '../../store/game.slice';
+import { IAttempt, addDuration, changeGameDuration } from '../../store/game.slice';
+import { selectToken } from '../../store/user.slice';
+import { OpacityButton } from '../common/components/opacity-button';
 import { HomeStackParamList } from '../navigation/home-stack';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'GameScreen'>;
@@ -18,6 +20,7 @@ export const GameScreen = ({ route }: Props) => {
   const attemptsArray: (IAttempt | number)[] = [];
 
   const dispatch = useDispatch<AppDispatch>();
+  const token = useSelector(selectToken);
 
   for (let i = 0; i < game.gameLevel; ++i) {
     attemptsArray.push(attempts[i] ? attempts[i] : i);
@@ -42,6 +45,7 @@ export const GameScreen = ({ route }: Props) => {
       }, 1000);
       return () => {
         dispatch(addDuration({ gameId: game._id, duration: durationRef.current }));
+        dispatch(changeGameDuration({ gameId: game._id, duration: durationRef.current, token }));
         clearInterval(interval);
       };
     }, []),
@@ -74,6 +78,9 @@ export const GameScreen = ({ route }: Props) => {
             );
           })}
         </View>
+        <View style={styles.buttonContainer}>
+          <OpacityButton title={'Guess Attempt'} />
+        </View>
       </View>
     </TouchableWithoutFeedback>
   );
@@ -105,5 +112,10 @@ const styles = StyleSheet.create({
   durationText: {
     color: colors.black,
     fontSize: 18,
+  },
+  buttonContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: '5%',
   },
 });
