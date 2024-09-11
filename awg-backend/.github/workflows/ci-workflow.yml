@@ -16,6 +16,6 @@ jobs:
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
-        cache-dependency-path: awg-backend/package-lock.json
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+        cache-dependency-path: 'awg-backend/package-lock.json'
