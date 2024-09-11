@@ -1,5 +1,5 @@
-import { forwardRef, useRef } from 'react';
-import { StyleSheet, TextInput, View } from 'react-native';
+import { forwardRef, useRef, useState } from 'react';
+import { StyleSheet, TextInput, TouchableWithoutFeedback, View } from 'react-native';
 
 import { GuessAttemptItem } from './guess-attempt-item';
 import { IAttempt } from '../../store/game.slice';
@@ -18,6 +18,9 @@ export const GuessAttemptLetters = forwardRef<object, Props>(({ letterCount, att
   const letterArray = new Array(letterCount).fill(1).map((_, index) => index);
   const inputRefs = letterArray.map(() => useRef<TextInput>(null));
 
+  const [activeItem, setActiveItem] = useState(0);
+  const [attemptWord, setAttemptWord] = useState('');
+
   const methods: GuessAttemptLettersMethods = {
     blurAll: () => {
       for (const ref of inputRefs) {
@@ -31,15 +34,47 @@ export const GuessAttemptLetters = forwardRef<object, Props>(({ letterCount, att
     else if (ref) ref.current = methods;
   }
 
-  return (
+  const focusItem = (i: number) => {
+    inputRefs[i].current?.focus();
+  };
+
+  return activeAttempt ? (
+    <TouchableWithoutFeedback onPress={() => focusItem(activeItem)}>
+      <TextInput
+        value={attemptWord}
+        onChangeText={(text) => setAttemptWord(text)}
+        maxLength={letterCount}
+        style={styles.attemptInput}
+      />
+      <View style={styles.container}>
+        {letterArray.map((i) => (
+          <GuessAttemptItem
+            key={i.toString()}
+            index={i}
+            letterCount={letterCount}
+            ref={inputRefs[i]}
+            activeAttempt={activeAttempt}
+            attempt={attempt}
+            activeItem={activeItem}
+            setActiveItem={setActiveItem}
+            attemptWord={attemptWord}
+            setAttemptWord={setAttemptWord}
+            focusItem={focusItem}
+          />
+        ))}
+      </View>
+    </TouchableWithoutFeedback>
+  ) : (
     <View style={styles.container}>
       {letterArray.map((i) => (
         <GuessAttemptItem
           key={i.toString()}
           index={i}
+          letterCount={letterCount}
           ref={inputRefs[i]}
           activeAttempt={activeAttempt}
           attempt={attempt}
+          attemptWord={attemptWord}
         />
       ))}
     </View>
@@ -52,5 +87,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+  },
+  attemptInput: {
+    position: 'absolute',
+    left: -5000,
+    top: -5000,
+    borderWidth: 20,
   },
 });

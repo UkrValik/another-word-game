@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 import { RootState } from '.';
 
@@ -31,7 +31,7 @@ export interface IGame {
   createdBy: string; // user._id or 'game'
   started: Date;
   finished?: Date;
-  duration?: number;
+  duration: number;
   attempts: IAttempt[];
 }
 
@@ -78,6 +78,12 @@ export interface ICreateAttemptDto {
   token: string;
 }
 
+export interface ChangeGameDurationDto {
+  gameId: string;
+  duration: number;
+  token: string;
+}
+
 export const createGame = createAsyncThunk('game/new', async ({ game, token }: ICreateGameDto) => {
   const response = await fetch(baseUrl + 'game/new', {
     method: 'POST',
@@ -103,10 +109,32 @@ export const createAttempt = createAsyncThunk('game/add-attempt', async ({ attem
   return (await response.json()) as { game: IGame };
 });
 
+export const changeGameDuration = createAsyncThunk(
+  'game/change-duration',
+  async ({ gameId, duration, token }: ChangeGameDurationDto) => {
+    const response = await fetch(baseUrl + 'game/change-duration', {
+      method: 'POST',
+      headers: configHeaders(token),
+      body: JSON.stringify({ gameId, duration }),
+    });
+    return await response.json();
+  },
+);
+
+export interface AddDurationPayload {
+  gameId: string;
+  duration: number;
+}
+
 export const gameSlice = createSlice({
   name: 'game',
   initialState,
-  reducers: {},
+  reducers: {
+    addDuration: (state, action: PayloadAction<AddDurationPayload>) => {
+      const i = state.activeGames.findIndex((g) => g._id === action.payload.gameId);
+      state.activeGames[i].duration += action.payload.duration;
+    },
+  },
   extraReducers: (builder) => {
     builder
       // create game flow
@@ -131,7 +159,16 @@ export const gameSlice = createSlice({
       .addCase(getUserGames.fulfilled, (state, action) => {
         state.loadingGame = false;
         state.gameError = '';
-        state.activeGames = action.payload.games.filter((game) => !game.finished);
+        action.payload.games.reverse();
+        state.activeGames = action.payload.games.filter((game) => {
+          if (!game.finished) {
+            const localGameCopy = state.activeGames.find((g) => g._id === game._id);
+            if (localGameCopy) {
+              game.duration = localGameCopy.duration > game.duration ? localGameCopy.duration : game.duration;
+            }
+            return game;
+          }
+        });
         state.finishedGames = action.payload.games.filter((game) => game.finished);
       })
       .addCase(getUserGames.rejected, (state, action) => {
@@ -160,6 +197,8 @@ export const gameSlice = createSlice({
       });
   },
 });
+
+export const { addDuration } = gameSlice.actions;
 
 export const selectActiveGames = (state: RootState) => state.game.activeGames;
 export const selectFinishedGames = (state: RootState) => state.game.finishedGames;

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { GameRepository } from './repositories/game.repository';
-import { AttemptCreate, GameCreate } from '@awg-backend/contracts';
+import { AttemptCreate, ChangeGameDuration, GameCreate } from '@awg-backend/contracts';
 import { GameEntity } from './entities/game.entity';
 import { AttemptEntity } from './entities/attempt.entity';
 import { IWord } from '@awg-backend/interfaces';
@@ -47,9 +47,20 @@ export class GameService {
     });
     const gameEntity = new GameEntity(game);
     gameEntity.addAttempt(newAttemptEntity);
-    if (newAttemptEntity.attemptWord === gameEntity.word) {
+    if (newAttemptEntity.attemptWord === gameEntity.word || newAttemptEntity.attemptNumber === gameEntity.gameLevel) {
       gameEntity.finish();
     }
     return this.gameRepository.updateGame(gameEntity);
+  }
+
+  async changeDuration({ gameId, duration }: ChangeGameDuration.Request) {
+    const game = await this.gameRepository.findById(gameId);
+    if (!game) {
+      throw new Error('Game not found');
+    }
+    const gameEntity = new GameEntity(game);
+    gameEntity.duration = duration;
+    this.gameRepository.updateGame(gameEntity);
+    return {};
   }
 }
