@@ -5,7 +5,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  test:
+  run-tests:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -19,3 +19,9 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
         cache-dependency-path: './awg-backend/package-lock.json'
+
+    - name: Test Account
+      working-directory: 'awg-backend'
+      run: |
+        npm ci
+        npm run account:test
