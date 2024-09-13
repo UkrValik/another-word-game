@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "account:test": "nx run account:test"
+    "account:test": "nx run account:test --skip-nx-cache"
   },
   "private": true,
   "dependencies": {
