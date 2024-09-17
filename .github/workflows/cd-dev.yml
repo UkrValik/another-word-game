@@ -1,8 +1,6 @@
 name: CD-DEV
 
-on:
-  push:
-    branches: []
+on: workflow_dispatch
 
 env:
   REGISTRY: ghcr.io
@@ -27,4 +25,3 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-          
