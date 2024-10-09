@@ -61,4 +61,4 @@ jobs:
           npm ci
           npx nx build api
           docker build -t api:0.0.0 -f docker/Dockerfile-api .
-          docker push UkrValik/api:0.0.0
+          docker push api:0.0.0
