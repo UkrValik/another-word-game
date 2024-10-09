@@ -60,10 +60,5 @@ jobs:
         run: |
           npm ci
           npx nx build api
-      
-      - name: Check results of build
-        working-directory: 'awg-backend'
-        run: |
-          ls -l dist
-          ls -l dist/apps
-          ls -l dist/apps/api
+          docker build -t api:0.0.0 -f docker/Dockerfile-api .
+          docker push UkrValik/api:0.0.0
