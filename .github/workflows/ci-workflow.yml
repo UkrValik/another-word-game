@@ -64,5 +64,6 @@ jobs:
       - name: Check results of build
         working-directory: 'awg-backend'
         run: |
-          ls -a
-          ls -a ../
+          ls -l dist
+          ls -l dist/apps
+          ls -l dist/apps/api
