@@ -1,0 +1,11 @@
+FROM node:18
+
+WORKDIR /app
+
+COPY dist/apps/account .
+COPY package*.json .
+
+RUN npm install -g pm2@latest
+RUN npm ci
+
+ENTRYPOINT ["pm2-runtime", "main.js"]

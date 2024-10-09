@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-deployment
+  namespace: awg
+  labels:
+    app: awg-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: awg-app
+  template:
+    metadata:
+      labels:
+        app: awg-app
+    spec:
+      containers:
+      - name: api
+        image: api:1.0
+        env:
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: jwt
+              key: jwt_secret
+        - name: AMQP_EXCHANGE
+          value: "awg"
+        - name: AMQP_USER
+          valueFrom:
+            secretKeyRef:
+              name: rabbitmq-admin
+              key: user
+        - name: AMQP_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: rabbitmq-admin
+              key: pass
+        - name: AMQP_HOSTNAME
+          value: "10.98.210.7"
+        ports:
+        - containerPort: 3000
+#        imagePullPolicy: always # prod
+        imagePullPolicy: Never
+      serviceAccountName: default
