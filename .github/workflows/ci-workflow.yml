@@ -50,7 +50,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-          cahce-dependency-path: './awg-backend/package-lock.json'
+          cache-dependency-path: './awg-backend/package-lock.json'
       
       - uses: nrwl/nx-set-shas@v4
 
