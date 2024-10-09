@@ -73,7 +73,8 @@ jobs:
           context: ./awg-backend
           file: ./awg-backend/docker/Dockerfile-api
           push: true
-          tags: UkrValik/api:0.0.0
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
         
         # working-directory: 'awg-backend'
         # run: |
