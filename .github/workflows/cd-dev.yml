@@ -25,3 +25,6 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.CR_GITHUB_TOKEN }}
+
+      - name: Build api
+        run: npx nx run api:build:production
