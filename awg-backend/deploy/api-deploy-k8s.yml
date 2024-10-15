@@ -25,7 +25,10 @@ spec:
               name: jwt
               key: jwt_secret
         - name: AMQP_EXCHANGE
-          value: "awg"
+          valueFrom:
+            secretKeyRef:
+              name: rmq-api
+              key: exchange
         - name: AMQP_USER
           valueFrom:
             secretKeyRef:
@@ -37,7 +40,10 @@ spec:
               name: rabbitmq-admin
               key: pass
         - name: AMQP_HOSTNAME
-          value: "10.98.210.7"
+          valueFrom:
+            secretKeyRef:
+              name: rmq-api
+              key: hostname
         ports:
         - containerPort: 3000
         imagePullPolicy: Always # prod
