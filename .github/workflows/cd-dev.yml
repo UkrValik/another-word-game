@@ -2,29 +2,42 @@ name: CD-DEV
 
 on: workflow_dispatch
 
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
-
 jobs:
-  build-and-push-image:
+  deploy-apps:
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-      packages: write
-      attestations: write
-      id-token: write
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Log in to the Container registry
-        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+      
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
         with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.CR_GITHUB_TOKEN }}
+          token: ${{ secrets.DO_TOKEN }}
 
-      - name: Build api
-        run: npx nx run api:build:production
+      - name: Connect to cluster
+        run: doctl kubernetes cluster kubeconfig save ${{ secrets.DEV_CLUSTER_ID }}
+
+      - name: Use awg namespace
+        run: kubectl config set-context --current --namespace awg
+
+      - name: Deploy Account
+        working-directory: awg-backend
+        run: kubectl apply -f deploy/account-deploy-k8s.yml
+      
+      - name: Deploy Api
+        working-directory: awg-backend
+        run: kubectl apply -f deploy/api-deploy-k8s.yml
+      
+      - name: Deploy Game
+        working-directory: awg-backend
+        run: kubectl apply -f deploy/game-deploy-k8s.yml
+
+      - name: Deploy Vocabulary
+        working-directory: awg-backend
+        run: kubectl apply -f deploy/vocabulary-deploy-k8s.yml
+
+      - run: sleep 20s
+
+      - name: Verify deploy
+        run: kubectl get pods
