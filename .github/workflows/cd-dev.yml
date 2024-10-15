@@ -24,6 +24,20 @@ jobs:
       - name: Deploy Account
         working-directory: awg-backend
         run: kubectl apply -f deploy/account-deploy-k8s.yml
+      
+      - name: Deploy Api
+        working-directory: awg-backend
+        run: kubectl apply -f deploy/api-deploy-k8s.yml
+      
+      - name: Deploy Game
+        working-directory: awg-backend
+        run: kubectl apply -f deploy/game-deploy-k8s.yml
 
-      - name: Verify Account
+      - name: Deploy Vocabulary
+        working-directory: awg-backend
+        run: kubectl apply -f deploy/vocabulary-deploy-k8s.yml
+
+      - run: sleep 20s
+
+      - name: Verify deploy
         run: kubectl get pods
