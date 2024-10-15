@@ -69,7 +69,7 @@ spec:
             secretKeyRef:
               name: mongo-account
               key: database
-        imagePullPolicy: always # prod
+        imagePullPolicy: Always # prod
       imagePullSecrets:
       - name: regcred
       serviceAccountName: default
