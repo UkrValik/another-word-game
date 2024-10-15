@@ -19,7 +19,7 @@ jobs:
         run: doctl kubernetes cluster kubeconfig save ${{ secrets.DEV_CLUSTER_ID }}
 
       - name: Use awg namespace
-        run: kubectl config set-context --curent --namespace awg
+        run: kubectl config set-context --current --namespace awg
 
       - name: Deploy Account
         working-directory: awg-backend
