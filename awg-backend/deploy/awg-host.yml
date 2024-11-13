@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-awg
+  namespace: awg
+  annotations:
+   cert-manager.io/issuer: letsencrypt-nginx
+spec:
+  tls:
+   - hosts:
+     - awg.com.es
+     secretName: letsencrypt-awg
+  rules:
+    - host: awg.com.es
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: awg-app
+                port:
+                  number: 80
+  ingressClassName: nginx
