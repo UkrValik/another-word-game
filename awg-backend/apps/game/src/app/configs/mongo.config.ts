@@ -11,26 +11,29 @@ export const getMongoConfig = (): MongooseModuleAsyncOptions => {
   }
 }
 
-const getMongoString = (configService: ConfigService) =>
-  'mongodb+srv://' +
-  configService.get('MONGO_LOGIN') +
-  ':' +
-  configService.get('MONGO_PASSWORD') +
-  '@' +
-  configService.get('MONGO_HOST') +
-  '/' +
-  configService.get('MONGO_DATABASE');
+const getMongoString = (configService: ConfigService) => {
+    return configService.get('NODE_ENV') === 'DEVELOPMENT' ?
 
-// const getMongoString = (configService: ConfigService) =>
-//   'mongodb://' +
-//   configService.get('MONGO_LOGIN') +
-//   ':' +
-//   configService.get('MONGO_PASSWORD') +
-//   '@' +
-//   configService.get('MONGO_HOST') +
-//   ':' +
-//   configService.get('MONGO_PORT') +
-//   '/' +
-//   configService.get('MONGO_DATABASE') +
-//   '?authSource=' +
-//   configService.get('MONGO_AUTHDATABASE');
+      'mongodb://' +
+      configService.get('MONGO_LOGIN') +
+      ':' +
+      configService.get('MONGO_PASSWORD') +
+      '@' +
+      configService.get('MONGO_HOST') +
+      ':' +
+      configService.get('MONGO_PORT') +
+      '/' +
+      configService.get('MONGO_DATABASE') +
+      '?authSource=' +
+      configService.get('MONGO_AUTHDATABASE')
+    :
+
+      'mongodb+srv://' +
+      configService.get('MONGO_LOGIN') +
+      ':' +
+      configService.get('MONGO_PASSWORD') +
+      '@' +
+      configService.get('MONGO_HOST') +
+      '/' +
+      configService.get('MONGO_DATABASE');
+  }
