@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-deployment
+  namespace: awg
+  labels:
+    app: awg-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: awg-app
+  template:
+    metadata:
+      labels:
+        app: awg-app
+    spec:
+      containers:
+      - name: api
+        image: ghcr.io/ukrvalik/api:0.1
+        env:
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: jwt
+              key: jwt_secret
+        - name: AMQP_EXCHANGE
+          valueFrom:
+            secretKeyRef:
+              name: rmq-api
+              key: exchange
+        - name: AMQP_USER
+          valueFrom:
+            secretKeyRef:
+              name: rabbitmq-admin
+              key: user
+        - name: AMQP_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: rabbitmq-admin
+              key: pass
+        - name: AMQP_HOSTNAME
+          valueFrom:
+            secretKeyRef:
+              name: rmq-api
+              key: hostname
+        ports:
+        - containerPort: 3000
+        imagePullPolicy: Always # prod
+      imagePullSecrets:
+      - name: regcred
+      serviceAccountName: default

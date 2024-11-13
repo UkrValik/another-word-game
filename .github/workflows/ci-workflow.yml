@@ -1,0 +1,27 @@
+name: Node.js CI
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        cache-dependency-path: './awg-backend/package-lock.json'
+
+    - name: Test Account
+      working-directory: 'awg-backend'
+      run: |
+        npm ci
+        npm run account:test

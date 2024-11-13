@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: game-deployment
+  namespace: awg
+  labels:
+    app: awg-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: awg-app
+  template:
+    metadata:
+      labels:
+        app: awg-app
+    spec:
+      containers:
+      - name: game
+        image: ghcr.io/ukrvalik/game:0.1
+        env:
+        - name: AMQP_EXCHANGE
+          valueFrom:
+            secretKeyRef:
+              name: rmq-game
+              key: exchange
+        - name: AMQP_QUEUE
+          valueFrom:
+            secretKeyRef:
+              name: rmq-game
+              key: queue
+        - name: AMQP_USER
+          valueFrom:
+            secretKeyRef:
+              name: rabbitmq-admin
+              key: user
+        - name: AMQP_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: rabbitmq-admin
+              key: pass
+        - name: AMQP_HOSTNAME
+          valueFrom:
+            secretKeyRef:
+              name: rmq-game
+              key: hostname
+        - name: MONGO_LOGIN
+          valueFrom:
+            secretKeyRef:
+              name: mongo-user
+              key: mongo_login
+        - name: MONGO_PASSWORD
+          valueFrom:
+            secretKeyRef: 
+              name: mongo-user
+              key: mongo_password
+        - name: MONGO_HOST
+          valueFrom:
+            secretKeyRef:
+              name: mongo-game
+              key: host
+        - name: MONGO_DATABASE
+          valueFrom:
+            secretKeyRef:
+              name: mongo-game
+              key: database
+        imagePullPolicy: Always # prod
+      imagePullSecrets:
+      - name: regcred
+      serviceAccountName: default

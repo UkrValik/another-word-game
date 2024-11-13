@@ -1,0 +1,52 @@
+name: API-BUILD-PUSH
+
+on: 
+  workflow_dispatch:
+    inputs:
+      tag:
+        required: true
+        type: string
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: api
+
+jobs:
+  build-push-api:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Log in to the Container registry
+        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.CR_GITHUB_TOKEN }}
+
+      - name: Use Node.js 18.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18.x
+          cache: 'npm'
+          cache-dependency-path: './awg-backend/package-lock.json'
+
+      - name: Build Api app
+        working-directory: 'awg-backend'
+        run: |
+          npm ci
+          npx nx build api
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.repository }}
+
+      - name: Build and push Api
+        uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+        with:
+          context: ./awg-backend
+          file: ./awg-backend/docker/Dockerfile-api
+          push: true
+          tags: ${{ env.REGISTRY }}/ukrvalik/${{ env.IMAGE_NAME }}:${{ inputs.tag }}
+          labels: ${{ steps.meta.outputs.labels }}
