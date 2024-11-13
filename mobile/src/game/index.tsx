@@ -52,7 +52,7 @@ export const GameScreen = ({ route }: Props) => {
   );
 
   return (
-    <TouchableWithoutFeedback onPress={() => lineRef.current?.blurAll()}>
+    <TouchableWithoutFeedback onPress={() => lineRef.current?.blur()}>
       <View style={styles.container}>
         <View style={styles.gameHeaderContainer}>
           <View>
