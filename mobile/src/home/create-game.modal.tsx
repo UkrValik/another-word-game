@@ -4,10 +4,11 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import * as colors from '../../assets/colors.json';
 import { AppDispatch } from '../../store';
-import { GameLevel, ICreateGameBody, createGame } from '../../store/game.slice';
+import { ICreateGameBody, createGame } from '../../store/game.slice';
 import { selectToken, seletctUser } from '../../store/user.slice';
 import { OpacityButton } from '../common/components/opacity-button';
 import { Select } from '../common/components/select';
+import { GameLevel } from '../common/types';
 
 interface Props {
   visible: boolean;

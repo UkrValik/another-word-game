@@ -7,9 +7,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { GuessAttemptLetters, GuessAttemptLettersMethods } from './guess-attempt-letters';
 import * as colors from '../../assets/colors.json';
 import { AppDispatch } from '../../store';
-import { IAttempt, addDuration, changeGameDuration } from '../../store/game.slice';
+import { addDuration, changeGameDuration } from '../../store/game.slice';
 import { selectToken } from '../../store/user.slice';
 import { OpacityButton } from '../common/components/opacity-button';
+import { IAttempt } from '../common/types';
 import { HomeStackParamList } from '../navigation/home-stack';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'GameScreen'>;

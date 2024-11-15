@@ -2,7 +2,7 @@ import { forwardRef, useRef, useState } from 'react';
 import { StyleSheet, TextInput, TouchableWithoutFeedback, View } from 'react-native';
 
 import { GuessAttemptItem } from './guess-attempt-item';
-import { IAttempt } from '../../store/game.slice';
+import { IAttempt } from '../common/types';
 
 export type GuessAttemptLettersMethods = {
   blur: () => void;

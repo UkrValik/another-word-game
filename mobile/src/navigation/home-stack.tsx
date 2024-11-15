@@ -1,6 +1,6 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import { IGame } from '../../store/game.slice';
+import { IGame } from '../common/types';
 import { GameScreen } from '../game';
 import { Home } from '../home';
 

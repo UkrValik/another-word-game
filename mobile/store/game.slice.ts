@@ -1,39 +1,9 @@
 import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
+import { allUserGamesGet, changeGameDurationPost, createAttemptPost, createGamePost } from '../api/game';
+import { GameLevel, IGame } from '../src/common/types';
+
 import { RootState } from '.';
-
-const baseUrl = process.env.EXPO_PUBLIC_BASE_URL;
-const configHeaders = (token: string) => ({
-  'Content-Type': 'application/json',
-  Authorization: 'Bearer ' + token,
-});
-
-export enum GameLevel {
-  Easy = 8,
-  Normal = 6,
-  Hard = 4,
-}
-
-export interface IAttempt {
-  _id?: string;
-  attemptWord: string;
-  attemptNumber: number;
-  duration: number;
-}
-
-export interface IGame {
-  _id: string;
-  name: string;
-  playerId: string;
-  word: string;
-  length: number;
-  gameLevel: GameLevel;
-  createdBy: string; // user._id or 'game'
-  started: Date;
-  finished?: Date;
-  duration: number;
-  attempts: IAttempt[];
-}
 
 export interface IGameSlice {
   finishedGames: IGame[];
@@ -85,39 +55,21 @@ export interface ChangeGameDurationDto {
 }
 
 export const createGame = createAsyncThunk('game/new', async ({ game, token }: ICreateGameDto) => {
-  const response = await fetch(baseUrl + 'game/new', {
-    method: 'POST',
-    headers: configHeaders(token),
-    body: JSON.stringify(game),
-  });
-  return (await response.json()) as IGame;
+  return (await createGamePost({ game, token })) as IGame;
 });
 
 export const getUserGames = createAsyncThunk('game/all', async (token: string) => {
-  const response = await fetch(baseUrl + 'game/all', {
-    headers: configHeaders(token),
-  });
-  return (await response.json()) as { games: IGame[] };
+  return (await allUserGamesGet(token)) as { games: IGame[] };
 });
 
 export const createAttempt = createAsyncThunk('game/add-attempt', async ({ attempt, token }: ICreateAttemptDto) => {
-  const response = await fetch(baseUrl + 'game/add-attempt', {
-    method: 'POST',
-    headers: configHeaders(token),
-    body: JSON.stringify(attempt),
-  });
-  return (await response.json()) as { game: IGame };
+  return (await createAttemptPost({ attempt, token })) as { game: IGame };
 });
 
 export const changeGameDuration = createAsyncThunk(
   'game/change-duration',
   async ({ gameId, duration, token }: ChangeGameDurationDto) => {
-    const response = await fetch(baseUrl + 'game/change-duration', {
-      method: 'POST',
-      headers: configHeaders(token),
-      body: JSON.stringify({ gameId, duration }),
-    });
-    return await response.json();
+    return await changeGameDurationPost({ gameId, duration, token });
   },
 );
 

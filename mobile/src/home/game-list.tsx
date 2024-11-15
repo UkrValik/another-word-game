@@ -4,9 +4,10 @@ import { ScrollView, StyleSheet } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { AppDispatch } from '../../store';
-import { IGame, getUserGames, selectActiveGames } from '../../store/game.slice';
+import { getUserGames, selectActiveGames } from '../../store/game.slice';
 import { selectToken } from '../../store/user.slice';
 import { GameCard } from '../common/components/game-card';
+import { IGame } from '../common/types';
 
 interface Props {
   navigateToGame: (game: IGame) => void;

@@ -1,28 +1,39 @@
-export enum GameStateEnum {
-  active = 'active',
-  finished = 'finished',
+export enum UserRole {
+  Regular = 'Regular',
+  Admin = 'Admin',
 }
 
-export enum GameRequestedByEnum {
-  player = 'player',
-  app = 'app',
+export enum GameLevel {
+  Easy = 8,
+  Normal = 6,
+  Hard = 4,
 }
 
-export type Game = {
-  id: string;
-  state: GameStateEnum;
-  timeSpent: number;
-  attemptsLeft: number;
-  attemptsCount: number;
-  gameRequestedBy: GameRequestedByEnum;
-  secretWord: string;
-  attempts: Attempt[];
-};
+export interface IUser {
+  _id: string;
+  displayName?: string;
+  userName: string;
+  email: string;
+  role: UserRole;
+}
 
-export type Attempt = {
-  id: string;
-  gameId: string;
+export interface IAttempt {
+  _id?: string;
+  attemptWord: string;
+  attemptNumber: number;
+  duration: number;
+}
+
+export interface IGame {
+  _id: string;
+  name: string;
+  playerId: string;
   word: string;
-  guessedLettersIndexes: number[];
-  lettersInSecretWordIndexes: number[];
-};
+  length: number;
+  gameLevel: GameLevel;
+  createdBy: string; // user._id or 'game'
+  started: Date;
+  finished?: Date;
+  duration: number;
+  attempts: IAttempt[];
+}

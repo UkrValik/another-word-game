@@ -1,7 +1,7 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import colors from '../../../assets/colors.json';
-import { IGame } from '../../../store/game.slice';
+import { IGame } from '../types';
 
 interface Props {
   game: IGame;

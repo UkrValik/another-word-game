@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { GameList } from './game-list';
 import { HomeHeader } from './header';
-import { IGame } from '../../store/game.slice';
+import { IGame } from '../common/types';
 import { HomeStackParamList } from '../navigation/home-stack';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'Home'>;
