@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: game
-        image: ghcr.io/ukrvalik/game:0.1
+        image: ghcr.io/ukrvalik/game:0.2
         env:
         - name: AMQP_EXCHANGE
           valueFrom:
