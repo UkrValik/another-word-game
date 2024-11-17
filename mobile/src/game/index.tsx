@@ -27,9 +27,9 @@ export const GameScreen = ({ route }: Props) => {
     attemptsArray.push(attempts[i] ? attempts[i] : i);
   }
 
-  const [duration, setDuration] = useState(0);
+  const [duration, setDuration] = useState(game.duration);
 
-  const durationRef = useRef(0);
+  const durationRef = useRef(game.duration);
   const lineRef = useRef<GuessAttemptLettersMethods>(null);
 
   const calculateTimeSpent = (timeSpent: number) => {
@@ -60,7 +60,7 @@ export const GameScreen = ({ route }: Props) => {
             <Text style={styles.gameHeader}>{game.name}</Text>
           </View>
           <View>
-            <Text style={styles.durationText}>{calculateTimeSpent((game.duration || 0) + duration)}</Text>
+            <Text style={styles.durationText}>{calculateTimeSpent(duration)}</Text>
           </View>
         </View>
         <View style={styles.attemptsWrapper}>

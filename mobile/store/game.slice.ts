@@ -84,7 +84,7 @@ export const gameSlice = createSlice({
   reducers: {
     addDuration: (state, action: PayloadAction<AddDurationPayload>) => {
       const i = state.activeGames.findIndex((g) => g._id === action.payload.gameId);
-      state.activeGames[i].duration += action.payload.duration;
+      state.activeGames[i].duration = action.payload.duration;
     },
   },
   extraReducers: (builder) => {
