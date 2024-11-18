@@ -33,6 +33,5 @@ export class GameEntity implements IGame {
 
   public addAttempt(attempt: AttemptEntity) {
     this.attempts.push(attempt);
-    this.duration += attempt.duration;
   }
 }
