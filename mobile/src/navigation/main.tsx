@@ -1,11 +1,11 @@
-import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import React from "react";
-import { useSelector } from "react-redux";
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import React from 'react';
+import { useSelector } from 'react-redux';
 
-import { HomeStack } from "./home-stack";
-import { SignInStack } from "./sign-in-stack";
-import { selectToken } from "../../store/user.slice";
+import { HomeStack } from './home-stack';
+import { SignInStack } from './sign-in-stack';
+import { selectToken } from '../../store/user.slice';
 
 const Stack = createNativeStackNavigator();
 

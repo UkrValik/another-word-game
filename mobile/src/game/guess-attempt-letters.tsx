@@ -1,50 +1,70 @@
 import { forwardRef, useRef } from 'react';
-import { StyleSheet, TextInput, View } from 'react-native';
+import { StyleSheet, TextInput, TouchableWithoutFeedback, View } from 'react-native';
 
 import { GuessAttemptItem } from './guess-attempt-item';
-import { IAttempt } from '../../store/game.slice';
+import { IAttempt } from '../common/types';
 
 export type GuessAttemptLettersMethods = {
-  blurAll: () => void;
+  blur: () => void;
 };
 
 interface Props {
   letterCount: number;
   attempt: IAttempt | number;
   activeAttempt: boolean;
+  attemptWord: string;
+  setAttemptWord: (text: string) => void;
 }
 
-export const GuessAttemptLetters = forwardRef<object, Props>(({ letterCount, attempt, activeAttempt }, ref) => {
-  const letterArray = new Array(letterCount).fill(1).map((_, index) => index);
-  const inputRefs = letterArray.map(() => useRef<TextInput>(null));
+export const GuessAttemptLetters = forwardRef<object, Props>(
+  ({ letterCount, attempt, activeAttempt, attemptWord, setAttemptWord }, ref) => {
+    const letterArray = new Array(letterCount).fill(1).map((_, index) => index);
+    const wordInputRef = useRef<TextInput>(null);
 
-  const methods: GuessAttemptLettersMethods = {
-    blurAll: () => {
-      for (const ref of inputRefs) {
-        ref.current?.blur();
-      }
-    },
-  };
+    const methods: GuessAttemptLettersMethods = {
+      blur: () => wordInputRef.current?.blur(),
+    };
 
-  if (activeAttempt) {
-    if (typeof ref === 'function') ref(methods);
-    else if (ref) ref.current = methods;
-  }
+    if (activeAttempt) {
+      if (typeof ref === 'function') ref(methods);
+      else if (ref) ref.current = methods;
+    }
 
-  return (
-    <View style={styles.container}>
-      {letterArray.map((i) => (
-        <GuessAttemptItem
-          key={i.toString()}
-          index={i}
-          ref={inputRefs[i]}
-          activeAttempt={activeAttempt}
-          attempt={attempt}
-        />
-      ))}
-    </View>
-  );
-});
+    return activeAttempt ? (
+      <TouchableWithoutFeedback onPress={() => wordInputRef.current?.focus()}>
+        <View>
+          <TextInput
+            ref={wordInputRef}
+            value={attemptWord}
+            onChangeText={(text) => setAttemptWord(text)}
+            maxLength={letterCount}
+            style={styles.attemptInput}
+          />
+          <View style={styles.container}>
+            {letterArray.map((i) => (
+              <GuessAttemptItem
+                key={i.toString()}
+                letter={attemptWord[i] || ''}
+                activeAttempt={activeAttempt}
+                isActive={attemptWord.length === i}
+              />
+            ))}
+          </View>
+        </View>
+      </TouchableWithoutFeedback>
+    ) : (
+      <View style={styles.container}>
+        {letterArray.map((i) => (
+          <GuessAttemptItem
+            key={i.toString()}
+            letter={typeof attempt === 'object' ? attempt.attemptWord[i] : ''}
+            activeAttempt={activeAttempt}
+          />
+        ))}
+      </View>
+    );
+  },
+);
 
 const styles = StyleSheet.create({
   container: {
@@ -52,5 +72,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    padding: 10,
+  },
+  attemptInput: {
+    position: 'absolute',
+    left: -2000,
+    top: -2000,
+    borderWidth: 20,
   },
 });

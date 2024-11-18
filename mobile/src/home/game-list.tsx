@@ -4,12 +4,12 @@ import { ScrollView, StyleSheet } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { AppDispatch } from '../../store';
-import { IGame, getUserGames, selectActiveGames } from '../../store/game.slice';
+import { getUserGames, selectActiveGames } from '../../store/game.slice';
 import { selectToken } from '../../store/user.slice';
 import { GameCard } from '../common/components/game-card';
 
 interface Props {
-  navigateToGame: (game: IGame) => void;
+  navigateToGame: (gameId: string) => void;
 }
 
 export const GameList = ({ navigateToGame }: Props) => {

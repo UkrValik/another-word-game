@@ -1,10 +1,11 @@
 import { BadRequestException, Body, Controller, Get, NotFoundException, Param, Post, UseGuards } from '@nestjs/common';
 import { RMQService } from 'nestjs-rmq';
 import { CreateGameDto } from '../dtos/create-game.dto';
-import { AttemptCreate, GameCreate, GameGetById, GameGetByUser } from '@awg-backend/contracts';
+import { AttemptCreate, ChangeGameDuration, GameCreate, GameGetById, GameGetByUser } from '@awg-backend/contracts';
 import { JWTAuthGuard } from '../guards/jwt.guard';
 import { UserId } from '../guards/user.decorator';
 import { AddAttemptDto } from '../dtos/add-attempt.dto';
+import { ChangeGameDurationDto } from '../dtos/change-game-duration.dto';
 
 @UseGuards(JWTAuthGuard)
 @Controller('game')
@@ -31,6 +32,17 @@ export class GameController {
     } catch (e) {
       if (e instanceof Error) {
         throw new NotFoundException(e.message);
+      }
+    }
+  }
+
+  @Post('change-duration')
+  async changeDuration(@Body() dto: ChangeGameDurationDto) {
+    try {
+      return await this.rmqService.send<ChangeGameDuration.Request, ChangeGameDuration.Response>(ChangeGameDuration.topic, dto);
+    } catch (e) {
+      if (e instanceof Error) {
+        throw new BadRequestException(e.message);
       }
     }
   }

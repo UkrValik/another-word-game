@@ -1,10 +1,4 @@
-import {
-  StyleSheet,
-  Text,
-  TouchableWithoutFeedback,
-  View,
-  ViewStyle,
-} from 'react-native';
+import { StyleSheet, Text, TouchableWithoutFeedback, View, ViewStyle } from 'react-native';
 
 import * as colors from '../../../assets/colors.json';
 
@@ -21,27 +15,11 @@ export const Select = (props: Props) => {
   return (
     <View style={styles.selectWrapper}>
       {options.map((currOption) => (
-        <TouchableWithoutFeedback
-          key={currOption.toString()}
-          onPress={() => setOption(currOption)}
-        >
+        <TouchableWithoutFeedback key={currOption.toString()} onPress={() => setOption(currOption)}>
           <View
-            style={[
-              chosenOption === currOption
-                ? styles.chosenSelectOption
-                : styles.selectOption,
-              selectOptionStyles,
-            ]}
+            style={[chosenOption === currOption ? styles.chosenSelectOption : styles.selectOption, selectOptionStyles]}
           >
-            <Text
-              style={
-                chosenOption === currOption
-                  ? styles.chosenSelectText
-                  : styles.selectText
-              }
-            >
-              {currOption}
-            </Text>
+            <Text style={chosenOption === currOption ? styles.chosenSelectText : styles.selectText}>{currOption}</Text>
           </View>
         </TouchableWithoutFeedback>
       ))}

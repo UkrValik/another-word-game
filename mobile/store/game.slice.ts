@@ -1,43 +1,22 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+
+import {
+  ChangeGameDurationDto,
+  ICreateAttemptDto,
+  ICreateGameDto,
+  allUserGamesGet,
+  changeGameDurationPost,
+  createAttemptPost,
+  createGamePost,
+} from '../api/game';
+import { IGame } from '../src/common/types';
 
 import { RootState } from '.';
-
-const baseUrl = process.env.EXPO_PUBLIC_BASE_URL;
-const configHeaders = (token: string) => ({
-  'Content-Type': 'application/json',
-  Authorization: 'Bearer ' + token,
-});
-
-export enum GameLevel {
-  Easy = 8,
-  Normal = 6,
-  Hard = 4,
-}
-
-export interface IAttempt {
-  _id?: string;
-  attemptWord: string;
-  attemptNumber: number;
-  duration: number;
-}
-
-export interface IGame {
-  _id: string;
-  name: string;
-  playerId: string;
-  word: string;
-  length: number;
-  gameLevel: GameLevel;
-  createdBy: string; // user._id or 'game'
-  started: Date;
-  finished?: Date;
-  duration?: number;
-  attempts: IAttempt[];
-}
 
 export interface IGameSlice {
   finishedGames: IGame[];
   activeGames: IGame[];
+  wordNotFound: boolean;
   loadingGame: boolean;
   loadingAttempt: boolean;
   gameError?: string;
@@ -47,66 +26,51 @@ export interface IGameSlice {
 const initialState: IGameSlice = {
   finishedGames: [],
   activeGames: [],
+  wordNotFound: false,
   loadingGame: false,
   loadingAttempt: false,
   gameError: '',
   attemptError: '',
 };
 
-export interface ICreateGameBody {
-  name: string;
-  playerId: string;
-  length: number;
-  gameLevel: GameLevel;
-  createdBy: string;
-  started: string;
-}
-
-export interface ICreateAttemptBody {
-  attemptWord: string;
-  attemptNumber: number;
-  duration: number;
-}
-
-export interface ICreateGameDto {
-  game: ICreateGameBody;
-  token: string;
-}
-
-export interface ICreateAttemptDto {
-  attempt: ICreateAttemptBody;
-  token: string;
-}
-
 export const createGame = createAsyncThunk('game/new', async ({ game, token }: ICreateGameDto) => {
-  const response = await fetch(baseUrl + 'game/new', {
-    method: 'POST',
-    headers: configHeaders(token),
-    body: JSON.stringify(game),
-  });
-  return (await response.json()) as IGame;
+  return (await createGamePost({ game, token })) as IGame;
 });
 
 export const getUserGames = createAsyncThunk('game/all', async (token: string) => {
-  const response = await fetch(baseUrl + 'game/all', {
-    headers: configHeaders(token),
-  });
-  return (await response.json()) as { games: IGame[] };
+  return (await allUserGamesGet(token)) as { games: IGame[] };
 });
 
-export const createAttempt = createAsyncThunk('game/add-attempt', async ({ attempt, token }: ICreateAttemptDto) => {
-  const response = await fetch(baseUrl + 'game/add-attempt', {
-    method: 'POST',
-    headers: configHeaders(token),
-    body: JSON.stringify(attempt),
-  });
-  return (await response.json()) as { game: IGame };
+export const createAttempt = createAsyncThunk('game/add-attempt', async ({ attemptBody, token }: ICreateAttemptDto) => {
+  return await createAttemptPost({ attemptBody, token });
 });
+
+export const changeGameDuration = createAsyncThunk(
+  'game/change-duration',
+  async ({ gameId, duration, token }: ChangeGameDurationDto) => {
+    return await changeGameDurationPost({ gameId, duration, token });
+  },
+);
+
+export interface AddDurationPayload {
+  gameId: string;
+  duration: number;
+}
 
 export const gameSlice = createSlice({
   name: 'game',
   initialState,
-  reducers: {},
+  reducers: {
+    addDuration: (state, action: PayloadAction<AddDurationPayload>) => {
+      const i = state.activeGames.findIndex((g) => g._id === action.payload.gameId);
+      if (i !== -1) {
+        state.activeGames[i].duration = action.payload.duration;
+      }
+    },
+    saveWordNotFound: (state, action: PayloadAction<boolean>) => {
+      state.wordNotFound = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       // create game flow
@@ -131,7 +95,16 @@ export const gameSlice = createSlice({
       .addCase(getUserGames.fulfilled, (state, action) => {
         state.loadingGame = false;
         state.gameError = '';
-        state.activeGames = action.payload.games.filter((game) => !game.finished);
+        action.payload.games.reverse();
+        state.activeGames = action.payload.games.filter((game) => {
+          if (!game.finished) {
+            const localGameCopy = state.activeGames.find((g) => g._id === game._id);
+            if (localGameCopy) {
+              game.duration = localGameCopy.duration > game.duration ? localGameCopy.duration : game.duration;
+            }
+            return game;
+          }
+        });
         state.finishedGames = action.payload.games.filter((game) => game.finished);
       })
       .addCase(getUserGames.rejected, (state, action) => {
@@ -140,6 +113,7 @@ export const gameSlice = createSlice({
       })
       // create game attempt flow
       .addCase(createAttempt.pending, (state) => {
+        state.wordNotFound = false;
         state.loadingAttempt = true;
         state.attemptError = '';
       })
@@ -157,13 +131,17 @@ export const gameSlice = createSlice({
       .addCase(createAttempt.rejected, (state, action) => {
         state.loadingAttempt = false;
         state.attemptError = action.error.message;
+        state.wordNotFound = true;
       });
   },
 });
+
+export const { addDuration, saveWordNotFound } = gameSlice.actions;
 
 export const selectActiveGames = (state: RootState) => state.game.activeGames;
 export const selectFinishedGames = (state: RootState) => state.game.finishedGames;
 export const selectAttemptLoading = (state: RootState) => state.game.loadingAttempt;
 export const selectAttemptError = (state: RootState) => state.game.attemptError;
+export const selectWordNotFound = (state: RootState) => state.game.wordNotFound;
 
 export default gameSlice.reducer;

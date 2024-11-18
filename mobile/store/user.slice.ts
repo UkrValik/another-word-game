@@ -1,28 +1,9 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
+import { login, register, userInfoGet } from '../api/user';
+import { IUser, UserRole } from '../src/common/types';
+
 import { RootState } from '.';
-
-const baseUrl = process.env.EXPO_PUBLIC_BASE_URL;
-const headers = {
-  'Content-Type': 'application/json',
-};
-const configHeaders = (token: string) => ({
-  'Content-Type': 'application/json',
-  Authorization: 'Bearer ' + token,
-});
-
-export enum UserRole {
-  Regular = 'Regular',
-  Admin = 'Admin',
-}
-
-export interface IUser {
-  _id: string;
-  displayName?: string;
-  userName: string;
-  email: string;
-  role: UserRole;
-}
 
 export interface IUserSlice {
   user: IUser;
@@ -45,26 +26,14 @@ const initialState: IUserSlice = {
 };
 
 export const userSignIn = createAsyncThunk('user/login', async (body: { email: string; password: string }) => {
-  const loginResponse = await fetch(baseUrl + 'auth/login', {
-    method: 'POST',
-    headers,
-    body: JSON.stringify(body),
-  });
-  const { access_token } = await loginResponse.json();
-  const infoResponse = await fetch(baseUrl + 'user/info', {
-    headers: configHeaders(access_token),
-  });
-  const user = await infoResponse.json();
+  const { access_token } = await login(body);
+  const user = await userInfoGet(access_token);
+  console.log(user);
   return { user, access_token };
 });
 
 export const userSignUp = createAsyncThunk('user/register', async (body: { email: string; password: string }) => {
-  const response = await fetch(baseUrl + 'auth/register', {
-    method: 'POST',
-    headers,
-    body: JSON.stringify(body),
-  });
-  return (await response.json()) as { user: IUser; access_token: string };
+  return (await register(body)) as { user: IUser; access_token: string };
 });
 
 export const userSlice = createSlice({

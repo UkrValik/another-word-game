@@ -1,7 +1,7 @@
 import { Body, Controller, NotFoundException } from '@nestjs/common';
 import { GameService } from './game.service';
 import { RMQRoute, RMQService, RMQValidate } from 'nestjs-rmq';
-import { AttemptCreate, GameCreate, VocabularyRandomByLength, VocabularyWordExists } from '@awg-backend/contracts';
+import { AttemptCreate, ChangeGameDuration, GameCreate, VocabularyRandomByLength, VocabularyWordExists } from '@awg-backend/contracts';
 
 @Controller()
 export class GameCommands {
@@ -26,5 +26,11 @@ export class GameCommands {
     }
     const game = await this.gameService.addAttempt(attemptRequest);
     return { game };
+  }
+
+  @RMQValidate()
+  @RMQRoute(ChangeGameDuration.topic)
+  async changeGameDuration(@Body() changeDurationDto: ChangeGameDuration.Request): Promise<ChangeGameDuration.Response> {
+    return await this.gameService.changeDuration(changeDurationDto);
   }
 }

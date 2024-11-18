@@ -15,10 +15,7 @@ export const HomeHeader = () => {
   return (
     <View style={styles.container}>
       <OpacityButton onPress={onPress} title={'New Game'} />
-      <CreateGameModal
-        visible={createGameModalVisisble}
-        setVisible={setCreateGameModalVisible}
-      />
+      <CreateGameModal visible={createGameModalVisisble} setVisible={setCreateGameModalVisible} />
     </View>
   );
 };

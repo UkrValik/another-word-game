@@ -1,49 +1,22 @@
-import { forwardRef, useRef } from 'react';
-import { StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
-
-import { IAttempt } from '../../store/game.slice';
+import { StyleSheet, Text, View } from 'react-native';
 
 interface Props {
-  attempt: IAttempt | number;
   activeAttempt: boolean;
-  index: number;
+  letter: string;
+  isActive?: boolean;
 }
 
-export const GuessAttemptItem = forwardRef<TextInput, Props>(({ attempt, activeAttempt, index }, inputRef) => {
-  const innerRef = useRef<TextInput | null>(null);
-
-  const onItemPress = () => {
-    innerRef.current?.focus();
-  };
-
+export const GuessAttemptItem = ({ activeAttempt, letter, isActive }: Props) => {
   return activeAttempt ? (
-    <TouchableWithoutFeedback onPress={() => onItemPress()}>
-      <View style={styles.item}>
-        <TextInput
-          style={styles.inputStyle}
-          editable={activeAttempt}
-          contextMenuHidden={activeAttempt}
-          value={typeof attempt === 'object' ? attempt.attemptWord[index] : ''}
-          autoCapitalize="characters"
-          ref={(element: TextInput) => {
-            if (activeAttempt) {
-              innerRef.current = element;
-              if (typeof inputRef === 'function') {
-                inputRef(element);
-              } else if (inputRef) {
-                inputRef.current = element;
-              }
-            }
-          }}
-        />
-      </View>
-    </TouchableWithoutFeedback>
+    <View style={[styles.item, { borderWidth: isActive ? 5 : 1 }]}>
+      <Text style={styles.inputStyle}>{letter.toUpperCase()}</Text>
+    </View>
   ) : (
     <View style={styles.item}>
-      <Text style={styles.inputStyle}>{typeof attempt === 'object' ? attempt.attemptWord[index] : ''}</Text>
+      <Text style={styles.inputStyle}>{letter}</Text>
     </View>
   );
-});
+};
 
 const styles = StyleSheet.create({
   item: {
