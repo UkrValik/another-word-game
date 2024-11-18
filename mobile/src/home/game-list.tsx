@@ -7,10 +7,9 @@ import { AppDispatch } from '../../store';
 import { getUserGames, selectActiveGames } from '../../store/game.slice';
 import { selectToken } from '../../store/user.slice';
 import { GameCard } from '../common/components/game-card';
-import { IGame } from '../common/types';
 
 interface Props {
-  navigateToGame: (game: IGame) => void;
+  navigateToGame: (gameId: string) => void;
 }
 
 export const GameList = ({ navigateToGame }: Props) => {

@@ -3,18 +3,19 @@ import { StyleSheet, Text, TextStyle, TouchableOpacity, View, ViewStyle } from '
 import * as colors from '../../../assets/colors.json';
 
 interface Props {
-  onPress?: () => void;
+  title: string;
+  disabled?: boolean;
+  outline?: boolean;
   titleStyles?: TextStyle;
   titleWrapperStyles?: ViewStyle;
-  outline?: boolean;
-  title: string;
+  onPress?: () => void;
 }
 
 export const OpacityButton = (props: Props) => {
-  const { onPress, titleStyles, titleWrapperStyles, title, outline } = props;
+  const { title, disabled, outline, titleStyles, titleWrapperStyles, onPress } = props;
 
   return (
-    <TouchableOpacity onPress={onPress}>
+    <TouchableOpacity onPress={onPress} disabled={disabled}>
       <View style={[outline ? styles.outlineWrapper : styles.titleWrapper, titleWrapperStyles]}>
         <Text style={[outline ? styles.outlineTitle : styles.title, titleStyles]}>{title}</Text>
       </View>

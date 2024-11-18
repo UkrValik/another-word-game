@@ -1,7 +1,7 @@
 import { baseUrl, configHeaders, retryNum } from './utils';
 import { GameLevel, IGame } from '../src/common/types';
 
-interface ICreateGameBody {
+export interface ICreateGameBody {
   name: string;
   playerId: string;
   length: number;
@@ -10,23 +10,26 @@ interface ICreateGameBody {
   started: string;
 }
 
-interface ICreateAttemptBody {
-  attemptWord: string;
-  attemptNumber: number;
-  duration: number;
+export interface ICreateAttemptBody {
+  gameId: string;
+  attempt: {
+    attemptWord: string;
+    attemptNumber: number;
+    duration: number;
+  };
 }
 
-interface ICreateGameDto {
+export interface ICreateGameDto {
   game: ICreateGameBody;
   token: string;
 }
 
-interface ICreateAttemptDto {
-  attempt: ICreateAttemptBody;
+export interface ICreateAttemptDto {
+  attemptBody: ICreateAttemptBody;
   token: string;
 }
 
-interface ChangeGameDurationDto {
+export interface ChangeGameDurationDto {
   gameId: string;
   duration: number;
   token: string;
@@ -46,15 +49,18 @@ export const createGamePost = async ({ game, token }: ICreateGameDto): Promise<I
   throw new Error('Cannot create game');
 };
 
-export const createAttemptPost = async ({ attempt, token }: ICreateAttemptDto): Promise<{ game: IGame }> => {
+export const createAttemptPost = async ({ attemptBody, token }: ICreateAttemptDto): Promise<{ game: IGame }> => {
   for (let i = 0; i < retryNum; ++i) {
     const response = await fetch(baseUrl + 'game/add-attempt', {
       method: 'POST',
       headers: configHeaders(token),
-      body: JSON.stringify(attempt),
+      body: JSON.stringify(attemptBody),
     });
     if (response.ok) {
       return await response.json();
+    }
+    if (response.status === 404) {
+      throw await response.json();
     }
   }
   throw new Error('Cannot create attempt');
@@ -73,7 +79,6 @@ export const allUserGamesGet = async (token: string): Promise<{ games: IGame[] }
 };
 
 export const changeGameDurationPost = async ({ gameId, duration, token }: ChangeGameDurationDto) => {
-  console.log(gameId, duration);
   for (let i = 0; i < retryNum; ++i) {
     const response = await fetch(baseUrl + 'game/change-duration', {
       method: 'POST',
@@ -83,7 +88,6 @@ export const changeGameDurationPost = async ({ gameId, duration, token }: Change
     if (response.ok) {
       return await response.json();
     }
-    console.log(await response.json());
   }
   throw new Error('Cannot change game duration');
 };

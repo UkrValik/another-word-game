@@ -1,13 +1,22 @@
 import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
-import { allUserGamesGet, changeGameDurationPost, createAttemptPost, createGamePost } from '../api/game';
-import { GameLevel, IGame } from '../src/common/types';
+import {
+  ChangeGameDurationDto,
+  ICreateAttemptDto,
+  ICreateGameDto,
+  allUserGamesGet,
+  changeGameDurationPost,
+  createAttemptPost,
+  createGamePost,
+} from '../api/game';
+import { IGame } from '../src/common/types';
 
 import { RootState } from '.';
 
 export interface IGameSlice {
   finishedGames: IGame[];
   activeGames: IGame[];
+  wordNotFound: boolean;
   loadingGame: boolean;
   loadingAttempt: boolean;
   gameError?: string;
@@ -17,42 +26,12 @@ export interface IGameSlice {
 const initialState: IGameSlice = {
   finishedGames: [],
   activeGames: [],
+  wordNotFound: false,
   loadingGame: false,
   loadingAttempt: false,
   gameError: '',
   attemptError: '',
 };
-
-export interface ICreateGameBody {
-  name: string;
-  playerId: string;
-  length: number;
-  gameLevel: GameLevel;
-  createdBy: string;
-  started: string;
-}
-
-export interface ICreateAttemptBody {
-  attemptWord: string;
-  attemptNumber: number;
-  duration: number;
-}
-
-export interface ICreateGameDto {
-  game: ICreateGameBody;
-  token: string;
-}
-
-export interface ICreateAttemptDto {
-  attempt: ICreateAttemptBody;
-  token: string;
-}
-
-export interface ChangeGameDurationDto {
-  gameId: string;
-  duration: number;
-  token: string;
-}
 
 export const createGame = createAsyncThunk('game/new', async ({ game, token }: ICreateGameDto) => {
   return (await createGamePost({ game, token })) as IGame;
@@ -62,8 +41,8 @@ export const getUserGames = createAsyncThunk('game/all', async (token: string) =
   return (await allUserGamesGet(token)) as { games: IGame[] };
 });
 
-export const createAttempt = createAsyncThunk('game/add-attempt', async ({ attempt, token }: ICreateAttemptDto) => {
-  return (await createAttemptPost({ attempt, token })) as { game: IGame };
+export const createAttempt = createAsyncThunk('game/add-attempt', async ({ attemptBody, token }: ICreateAttemptDto) => {
+  return await createAttemptPost({ attemptBody, token });
 });
 
 export const changeGameDuration = createAsyncThunk(
@@ -84,7 +63,12 @@ export const gameSlice = createSlice({
   reducers: {
     addDuration: (state, action: PayloadAction<AddDurationPayload>) => {
       const i = state.activeGames.findIndex((g) => g._id === action.payload.gameId);
-      state.activeGames[i].duration = action.payload.duration;
+      if (i !== -1) {
+        state.activeGames[i].duration = action.payload.duration;
+      }
+    },
+    saveWordNotFound: (state, action: PayloadAction<boolean>) => {
+      state.wordNotFound = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -129,6 +113,7 @@ export const gameSlice = createSlice({
       })
       // create game attempt flow
       .addCase(createAttempt.pending, (state) => {
+        state.wordNotFound = false;
         state.loadingAttempt = true;
         state.attemptError = '';
       })
@@ -146,15 +131,17 @@ export const gameSlice = createSlice({
       .addCase(createAttempt.rejected, (state, action) => {
         state.loadingAttempt = false;
         state.attemptError = action.error.message;
+        state.wordNotFound = true;
       });
   },
 });
 
-export const { addDuration } = gameSlice.actions;
+export const { addDuration, saveWordNotFound } = gameSlice.actions;
 
 export const selectActiveGames = (state: RootState) => state.game.activeGames;
 export const selectFinishedGames = (state: RootState) => state.game.finishedGames;
 export const selectAttemptLoading = (state: RootState) => state.game.loadingAttempt;
 export const selectAttemptError = (state: RootState) => state.game.attemptError;
+export const selectWordNotFound = (state: RootState) => state.game.wordNotFound;
 
 export default gameSlice.reducer;

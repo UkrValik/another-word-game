@@ -5,7 +5,7 @@ import { IGame } from '../types';
 
 interface Props {
   game: IGame;
-  navigateToGame: (game: IGame) => void;
+  navigateToGame: (gameId: string) => void;
 }
 
 export const GameCard = ({ game, navigateToGame }: Props) => {
@@ -18,7 +18,7 @@ export const GameCard = ({ game, navigateToGame }: Props) => {
   const attemptsLeft = game.gameLevel - game.attempts.length;
 
   return (
-    <TouchableOpacity style={styles.container} onPress={() => navigateToGame(game)}>
+    <TouchableOpacity style={styles.container} onPress={() => navigateToGame(game._id)}>
       <View style={styles.titleWrapper}>
         <Text style={styles.titleLabel}>{game.name}</Text>
       </View>
