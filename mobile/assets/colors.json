@@ -1,4 +1,19 @@
 {
   "black": "#000000",
-  "white": "#ffffff"
+  "black2": "00000d",
+  "white": "#ffffff",
+  "white2": "#f7faff",
+  "white3": "#f1f1f2",
+
+  "blue": "#5271ff",
+  "blue-dark": "#49688d",
+  "blue-sky": "#c9ddf7",
+  "blue-dark-sky": "$a5b8d0",
+
+  "grey": "#a6a6a6",
+  "grey-dark": "#545454",
+  "grey-light": "#d9d9d9",
+
+  "green": "#7ed957",
+  "yellow": "#ffbd59"
 }
