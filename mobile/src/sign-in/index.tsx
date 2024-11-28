@@ -1,22 +1,13 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { createRef, useState } from 'react';
-import {
-  ImageBackground,
-  Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableWithoutFeedback,
-  View,
-} from 'react-native';
+import { Keyboard, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import * as colors from '../../assets/colors.json';
 import { AppDispatch } from '../../store';
 import { userSignIn } from '../../store/user.slice';
 import { OpacityButton } from '../common/components/opacity-button';
+import { ScreenWrapper } from '../common/components/screen-wrapper';
 import { SignInStackParamList } from '../navigation/sign-in-stack';
 
 type Props = NativeStackScreenProps<SignInStackParamList, 'SignIn'>;
@@ -44,63 +35,55 @@ const SignIn = ({ navigation }: Props) => {
   };
 
   return (
-    <TouchableWithoutFeedback onPress={onBackgroundPress}>
-      <ImageBackground style={{ flex: 1 }} source={require('../../assets/background_image.png')} resizeMode={'repeat'}>
-        <View style={styles.container}>
-          <View style={styles.gameTitleContainer}>
-            <Text style={styles.gameTitle}>ONE MORE WORD GAME</Text>
-          </View>
-          <KeyboardAvoidingView
-            keyboardVerticalOffset={40}
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            style={styles.contentContainer}
-          >
-            <View style={styles.inputContainer}>
-              <TextInput
-                style={styles.inputComponent}
-                placeholder={'Email'}
-                value={email}
-                onChangeText={(text) => setEmail(text)}
-                ref={emailRef}
-              />
-            </View>
-            <View style={styles.inputContainer}>
-              <TextInput
-                style={styles.inputComponent}
-                placeholder={'Password'}
-                value={password}
-                onChangeText={(text) => setPassword(text)}
-                ref={passRef}
-              />
-            </View>
-            <View style={styles.forgotPassContainer}>
-              <Text style={styles.forgotPassText}>Forgot password?</Text>
-            </View>
-            <View>
-              <OpacityButton
-                title={'Log in'}
-                onPress={goToHome}
-                titleStyles={styles.signInButtonTitle}
-                titleWrapperStyles={styles.signInButtonContainer}
-              />
-            </View>
-            <View style={styles.orContainer}>
-              <View style={styles.orLine} />
-              <Text style={styles.orText}>or</Text>
-              <View style={styles.orLine} />
-            </View>
-            <View>
-              <OpacityButton
-                title={'Create an account'}
-                onPress={goToSignUp}
-                titleStyles={styles.signUpButtonTitle}
-                titleWrapperStyles={styles.signUpButtonContainer}
-              />
-            </View>
-          </KeyboardAvoidingView>
+    <ScreenWrapper containerStyles={styles.container} onBackgroundPress={onBackgroundPress}>
+      <View style={styles.gameTitleContainer}>
+        <Text style={styles.gameTitle}>ONE MORE WORD GAME</Text>
+      </View>
+      <KeyboardAvoidingView
+        keyboardVerticalOffset={40}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.contentContainer}
+      >
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.inputComponent}
+            placeholder={'Email'}
+            value={email}
+            onChangeText={(text) => setEmail(text)}
+            ref={emailRef}
+          />
         </View>
-      </ImageBackground>
-    </TouchableWithoutFeedback>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.inputComponent}
+            placeholder={'Password'}
+            value={password}
+            onChangeText={(text) => setPassword(text)}
+            ref={passRef}
+          />
+        </View>
+        <View style={styles.forgotPassContainer}>
+          <Text style={styles.forgotPassText}>Forgot password?</Text>
+        </View>
+        <OpacityButton
+          title={'Log in'}
+          onPress={goToHome}
+          titleStyles={styles.signInButtonTitle}
+          titleWrapperStyles={styles.signInButtonContainer}
+        />
+        <View style={styles.orContainer}>
+          <View style={styles.orLine} />
+          <Text style={styles.orText}>or</Text>
+          <View style={styles.orLine} />
+        </View>
+        <OpacityButton
+          title={'Create an account'}
+          onPress={goToSignUp}
+          titleStyles={styles.signUpButtonTitle}
+          titleWrapperStyles={styles.signUpButtonContainer}
+        />
+      </KeyboardAvoidingView>
+    </ScreenWrapper>
   );
 };
 
@@ -142,12 +125,6 @@ const styles = StyleSheet.create({
     marginTop: '30%',
     justifyContent: 'center',
   },
-  voidContainer: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    paddingBottom: '5%',
-    width: '90%',
-  },
   gameTitle: {
     fontWeight: '700',
     fontSize: 24,
@@ -166,9 +143,6 @@ const styles = StyleSheet.create({
     paddingVertical: '4.5%',
     paddingHorizontal: '5%',
     fontSize: 18,
-  },
-  inputActive: {
-    marginBottom: '30%',
   },
   orContainer: {
     flexDirection: 'row',
