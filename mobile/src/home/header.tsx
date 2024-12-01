@@ -14,7 +14,12 @@ export const HomeHeader = () => {
 
   return (
     <View style={styles.container}>
-      <OpacityButton onPress={onPress} title={'New Game'} />
+      <OpacityButton
+        onPress={onPress}
+        title={'New game'}
+        titleWrapperStyles={styles.newGameButtonContainer}
+        titleStyles={styles.newGameButtonTitle}
+      />
       <CreateGameModal visible={createGameModalVisisble} setVisible={setCreateGameModalVisible} />
     </View>
   );
@@ -22,12 +27,19 @@ export const HomeHeader = () => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.white,
-    borderColor: colors.black,
-    borderBottomWidth: 2,
-    height: '6%',
-    width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  newGameButtonContainer: {
+    backgroundColor: colors.blue,
+    alignItems: 'center',
+    paddingVertical: '5%',
+    paddingHorizontal: '15%',
+    marginVertical: '10%',
+  },
+  newGameButtonTitle: {
+    color: colors.white3,
+    fontSize: 20,
+    fontWeight: 'light',
   },
 });

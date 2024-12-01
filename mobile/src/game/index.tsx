@@ -1,10 +1,10 @@
 import { useFocusEffect } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useCallback, useRef, useState } from 'react';
-import { StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
+import { Keyboard, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { GuessAttemptLetters, GuessAttemptLettersMethods } from './guess-attempt-letters';
+import { GameHeader } from './header';
 import * as colors from '../../assets/colors.json';
 import { AppDispatch } from '../../store';
 import {
@@ -17,7 +17,9 @@ import {
   selectWordNotFound,
 } from '../../store/game.slice';
 import { selectToken } from '../../store/user.slice';
+import { LetterTable } from '../common/components/letter-table/letter-table';
 import { OpacityButton } from '../common/components/opacity-button';
+import { ScreenWrapper } from '../common/components/screen-wrapper';
 import { IAttempt } from '../common/types';
 import { HomeStackParamList } from '../navigation/home-stack';
 
@@ -33,26 +35,24 @@ export const GameScreen = ({ route }: Props) => {
   const attempts = game.attempts;
   const attemptsArray: (IAttempt | number)[] = [];
 
-  const dispatch = useDispatch<AppDispatch>();
-  const token = useSelector(selectToken);
-  const wordNotFound = useSelector(selectWordNotFound);
-
   for (let i = 0; i < game.gameLevel; ++i) {
     attemptsArray.push(attempts[i] ? attempts[i] : i);
   }
+
+  const dispatch = useDispatch<AppDispatch>();
+  const token = useSelector(selectToken);
+  const wordNotFound = useSelector(selectWordNotFound);
 
   const [attemptWord, setAttemptWord] = useState('');
   const [duration, setDuration] = useState(game.duration);
   const [showWordNotFound, setShowWordNotFound] = useState(false);
 
+  const wordInputRef = useRef<TextInput>(null);
   const durationRef = useRef(game.duration);
   const gameRef = useRef(game);
-  const lineRef = useRef<GuessAttemptLettersMethods>(null);
 
-  const calculateTimeSpent = (timeSpent: number) => {
-    const minutes = Math.floor(timeSpent / 60);
-    const seconds = timeSpent % 60;
-    return (minutes < 10 ? '0' + minutes : minutes) + ':' + (seconds < 10 ? '0' + seconds : seconds);
+  const focusWordInput = () => {
+    wordInputRef.current?.focus();
   };
 
   const onCreateAttempt = () => {
@@ -64,7 +64,7 @@ export const GameScreen = ({ route }: Props) => {
       { attemptNumber: 0, attemptWord: '', duration: 0 },
     ).duration;
     const attempt: IAttempt = {
-      attemptWord,
+      attemptWord: attemptWord.toLowerCase(),
       attemptNumber: attempts.length + 1,
       duration: duration - previousDuration,
     };
@@ -106,46 +106,35 @@ export const GameScreen = ({ route }: Props) => {
   );
 
   return (
-    <TouchableWithoutFeedback onPress={() => lineRef.current?.blur()}>
-      <View style={styles.container}>
-        <View style={styles.gameHeaderContainer}>
-          <View>
-            <Text style={styles.gameHeader}>{game.name}</Text>
-          </View>
-          <View>
-            <Text style={styles.durationText}>{calculateTimeSpent(duration)}</Text>
-          </View>
-        </View>
-        {!showWordNotFound && !game.finished && <View style={{ height: 15 }} />}
-        {showWordNotFound && <Text style={styles.warningText}>{wordNotFoundText}</Text>}
-        {game.finished && <Text>{game.word}</Text>}
-        <View style={styles.attemptsWrapper}>
-          {attemptsArray.map((attempt, index) => {
-            const activeAttempt =
-              (typeof attemptsArray[index] === 'number' && index === 0) ||
-              (typeof attemptsArray[index - 1] === 'object' && typeof attemptsArray[index] === 'number');
-            return (
-              <GuessAttemptLetters
-                key={JSON.stringify(attempt)}
-                ref={lineRef}
-                letterCount={game.length}
-                attempt={attempt}
-                activeAttempt={activeAttempt}
-                attemptWord={attemptWord}
-                setAttemptWord={setAttemptWord}
-              />
-            );
-          })}
-        </View>
-        <View style={styles.buttonContainer}>
-          <OpacityButton
-            onPress={onCreateAttempt}
-            title={'Guess Attempt'}
-            disabled={attemptWord.length !== game.length}
-          />
-        </View>
+    <ScreenWrapper safe onBackgroundPress={Keyboard.dismiss} containerStyles={styles.container}>
+      <GameHeader game={game} duration={duration} />
+      {!showWordNotFound && !game.finished && <View style={{ height: 15 }} />}
+      {showWordNotFound && <Text style={styles.warningText}>{wordNotFoundText}</Text>}
+      {game.finished && <Text>{game.word}</Text>}
+      <View style={styles.attemptsWrapper}>
+        <LetterTable
+          size={40}
+          attemptsArray={attemptsArray}
+          attemptWord={attemptWord}
+          game={game}
+          focusWordInput={focusWordInput}
+        />
       </View>
-    </TouchableWithoutFeedback>
+      <View style={styles.buttonContainer}>
+        <OpacityButton
+          onPress={onCreateAttempt}
+          title={'Guess Attempt'}
+          disabled={attemptWord.length !== game.length}
+        />
+      </View>
+      <TextInput
+        ref={wordInputRef}
+        value={attemptWord}
+        onChangeText={(text) => setAttemptWord(text)}
+        maxLength={game.length}
+        style={styles.attemptInput}
+      />
+    </ScreenWrapper>
   );
 };
 
@@ -153,12 +142,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    backgroundColor: colors.white,
   },
   attemptsWrapper: {
-    margin: 10,
+    padding: '3%',
+    width: '90%',
     justifyContent: 'space-between',
-    height: 336,
+    backgroundColor: colors.white2 + 'cc',
+    borderRadius: 10,
   },
   gameHeaderContainer: {
     flexDirection: 'row',
@@ -185,5 +175,11 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     marginLeft: '5%',
     color: 'red',
+  },
+  attemptInput: {
+    position: 'absolute',
+    left: -2000,
+    top: -2000,
+    borderWidth: 20,
   },
 });

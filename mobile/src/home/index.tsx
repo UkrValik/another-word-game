@@ -1,8 +1,10 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { GameList } from './game-list';
 import { HomeHeader } from './header';
+import { ScreenWrapper } from '../common/components/screen-wrapper';
 import { HomeStackParamList } from '../navigation/home-stack';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'Home'>;
@@ -13,10 +15,12 @@ export const Home = ({ navigation }: Props) => {
   };
 
   return (
-    <View style={styles.container}>
-      <HomeHeader />
-      <GameList navigateToGame={navigateToGame} />
-    </View>
+    <ScreenWrapper containerStyles={styles.container}>
+      <SafeAreaView style={{ flex: 1, width: '100%' }}>
+        <HomeHeader />
+        <GameList navigateToGame={navigateToGame} />
+      </SafeAreaView>
+    </ScreenWrapper>
   );
 };
 
