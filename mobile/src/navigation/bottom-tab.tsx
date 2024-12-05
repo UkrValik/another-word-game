@@ -1,6 +1,7 @@
 import Entypo from '@expo/vector-icons/Entypo';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { RouteProp, getFocusedRouteNameFromRoute } from '@react-navigation/native';
 
 import { HomeStack } from './home-stack';
 import * as colors from '../../assets/colors.json';
@@ -20,7 +21,14 @@ const Tab = createBottomTabNavigator<BottomTabsParamList>();
 export const BottomTabs = () => {
   return (
     <Tab.Navigator
-      screenOptions={{
+      screenOptions={({
+        route,
+      }: {
+        route: RouteProp<BottomTabsParamList, keyof BottomTabsParamList>;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        navigation: any;
+        theme: ReactNavigation.Theme;
+      }) => ({
         headerShown: false,
         tabBarItemStyle: {
           paddingBottom: 0,
@@ -39,18 +47,25 @@ export const BottomTabs = () => {
           width: '100%',
           height: '100%',
         },
-        tabBarStyle: {
-          position: 'absolute',
-          backgroundColor: colors.white2 + 'cc',
-          borderRadius: 10,
-          margin: '5%',
-          marginBottom: '3%',
-          paddingBottom: 0,
-          paddingHorizontal: '1%',
-          borderTopWidth: 0,
-          height: 80,
-        },
-      }}
+        tabBarStyle: ((route) => {
+          const routeName = getFocusedRouteNameFromRoute(route);
+          const routeNames = ['Home', 'ArchivScreen', 'FriendScreen', 'ProfileScreen', undefined];
+          if (!routeNames.includes(routeName)) {
+            return { display: 'none' };
+          }
+          return {
+            position: 'absolute',
+            backgroundColor: colors.white2 + 'cc',
+            borderRadius: 10,
+            margin: '5%',
+            marginBottom: '3%',
+            paddingBottom: 0,
+            paddingHorizontal: '1%',
+            borderTopWidth: 0,
+            height: 80,
+          };
+        })(route),
+      })}
     >
       <Tab.Screen
         name={'HomeStack'}

@@ -1,5 +1,5 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { GameList } from './game-list';
@@ -19,6 +19,7 @@ export const Home = ({ navigation }: Props) => {
       <SafeAreaView style={{ flex: 1, width: '100%' }}>
         <HomeHeader />
         <GameList navigateToGame={navigateToGame} />
+        <View style={styles.bottomTabSafeArea} />
       </SafeAreaView>
     </ScreenWrapper>
   );
@@ -29,5 +30,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  bottomTabSafeArea: {
+    height: 100,
   },
 });
