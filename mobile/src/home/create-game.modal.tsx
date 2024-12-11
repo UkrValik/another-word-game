@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { Modal, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
+import { Modal, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { ICreateGameBody } from '../../api/game';
 import * as colors from '../../assets/colors.json';
 import { AppDispatch } from '../../store';
-import { ICreateGameBody, createGame } from '../../store/game.slice';
+import { createGame } from '../../store/game.slice';
 import { selectToken, seletctUser } from '../../store/user.slice';
-import { OpacityButton } from '../common/components/opacity-button';
 import { Select } from '../common/components/select';
 import { GameLevel } from '../common/types';
 
@@ -51,28 +51,29 @@ export const CreateGameModal = (props: Props) => {
   return (
     <Modal visible={visible} animationType={'fade'} transparent>
       <TouchableWithoutFeedback onPress={() => setVisible(false)}>
-        <View style={{ backgroundColor: colors.black + 'cc' }}>
+        <View style={{ flex: 1, justifyContent: 'center', backgroundColor: colors.black + 'cc' }}>
           <TouchableWithoutFeedback onPress={() => {}}>
             <View style={styles.container}>
-              <View style={styles.headerWrapper}>
-                <OpacityButton title={'Cancel'} onPress={() => setVisible(false)} outline />
-                <OpacityButton title={'Create'} onPress={onCreateGame} />
-              </View>
               <View style={styles.contentWrapper}>
-                <View style={styles.nameInputWrapper}>
-                  <TextInput value={gameName} onChangeText={(text) => setGameName(text)} style={styles.nameInput} />
+                <View style={{ marginLeft: '5%', marginBottom: '10%' }}>
+                  <Text style={styles.label}>Game name</Text>
+                  <View style={styles.nameInputWrapper}>
+                    <TextInput value={gameName} onChangeText={(text) => setGameName(text)} style={styles.nameInput} />
+                  </View>
                 </View>
-                <View style={styles.labelWrapper}>
-                  <Text style={styles.label}>How many attempts do you want?</Text>
-                </View>
-                <Select
-                  options={[GameLevel.Easy, GameLevel.Normal, GameLevel.Hard]}
-                  chosenOption={gameLevel}
-                  setOption={(option) => setGameLevel(option)}
-                />
-                <View>
+                <View style={{ marginBottom: '10%' }}>
                   <View style={styles.labelWrapper}>
-                    <Text style={styles.label}>How long the word should be?</Text>
+                    <Text style={styles.label}>Attempts quantity</Text>
+                  </View>
+                  <Select
+                    options={[GameLevel.Easy, GameLevel.Normal, GameLevel.Hard]}
+                    chosenOption={gameLevel}
+                    setOption={(option) => setGameLevel(option)}
+                  />
+                </View>
+                <View style={{ marginBottom: '10%' }}>
+                  <View style={styles.labelWrapper}>
+                    <Text style={styles.label}>Word length</Text>
                   </View>
                   <Select
                     options={[4, 5, 6, 7, 8, 9, 10]}
@@ -80,6 +81,25 @@ export const CreateGameModal = (props: Props) => {
                     setOption={(option) => setWordLength(option)}
                     selectOptionStyles={{ width: '12%' }}
                   />
+                </View>
+                <View style={styles.footerWrapper}>
+                  <TouchableOpacity onPress={() => setVisible(false)} style={{ flex: 1 }}>
+                    <View style={[styles.buttonWrapper, { borderBottomLeftRadius: 30 }]}>
+                      <Text style={{ color: colors.blue, fontSize: 20 }}>Cancel</Text>
+                    </View>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={onCreateGame} style={{ flex: 1 }}>
+                    <View
+                      style={[
+                        styles.buttonWrapper,
+                        { borderBottomRightRadius: 30, borderLeftColor: colors['grey-light'], borderLeftWidth: 1 },
+                      ]}
+                    >
+                      <Text style={{ color: colors.blue, fontWeight: 'bold', fontSize: 20 }}>Create</Text>
+                    </View>
+                  </TouchableOpacity>
+                  {/* <OpacityButton title={'Cancel'} onPress={() => setVisible(false)} outline />
+                  <OpacityButton title={'Create'} onPress={onCreateGame} /> */}
                 </View>
               </View>
             </View>
@@ -92,25 +112,31 @@ export const CreateGameModal = (props: Props) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.white,
-    paddingHorizontal: '5%',
-    paddingTop: '5%',
-    marginTop: '140%',
+    // flex: 1,
+    backgroundColor: colors.white3,
+    marginHorizontal: '5%',
+    marginBottom: '40%',
     height: '40%',
-    borderTopRightRadius: 30,
-    borderTopLeftRadius: 30,
+    borderRadius: 30,
+    justifyContent: 'flex-end',
   },
-  headerWrapper: {
-    display: 'flex',
+  footerWrapper: {
     justifyContent: 'space-between',
     alignItems: 'center',
     flexDirection: 'row',
+    borderColor: colors['grey-light'],
+    borderTopWidth: 1,
+  },
+  buttonWrapper: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '10%',
   },
   contentWrapper: {
     marginTop: '5%',
   },
   labelWrapper: {
-    marginTop: '4%',
+    marginLeft: '5%',
   },
   label: {
     fontWeight: '400',
