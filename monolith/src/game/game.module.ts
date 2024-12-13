@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { VocabularyModule } from 'src/vocabulary/vocabulary.module';
+import { VocabularyModule } from '../vocabulary/vocabulary.module';
 import { Game, GameSchema } from './models/game.model';
 import { GameController } from './game.controller';
 import { GameService } from './game.service';

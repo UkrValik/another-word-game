@@ -1,4 +1,4 @@
-name: CD-DEV
+name: CD-DEV-SERVICES
 
 on: workflow_dispatch
 

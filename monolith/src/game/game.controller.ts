@@ -7,11 +7,11 @@ import {
   Post,
 } from '@nestjs/common';
 import { GameService } from './game.service';
-import { UserId } from 'src/guards/user.decorator';
+import { UserId } from '../guards/user.decorator';
 import { AddAttemptDto } from './dtos/add-attempt.dto';
 import { ChangeGameDurationDto } from './dtos/change-game-duration.dto';
 import { CreateGameDto } from './dtos/create-game.dto';
-import { VocabularyService } from 'src/vocabulary/vocabulary.service';
+import { VocabularyService } from '../vocabulary/vocabulary.service';
 
 @Controller('game')
 export class GameController {
