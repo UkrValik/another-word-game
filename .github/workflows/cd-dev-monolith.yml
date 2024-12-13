@@ -7,6 +7,10 @@ on:
           required: true
           type: string
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: awg
+
 jobs:
   deploy-apps:
     runs-on: ubuntu-latest
@@ -22,4 +26,10 @@ jobs:
           username: ${{ secrets.DEV_USERNAME }}
           key: ${{ secrets.DEV_KEY }}
           port: ${{ secrets.PORT }}
-          script_path: 
+          script_path: |
+            docker login ${{ env.REGISTRY }} -u ${{ secrets.USER_GITHUB }} -p ${{ secrets.CR_GITHUB_TOKEN }}
+            docker pull ${{ env.REGISTRY }}/${{ secrets.USER_GITHUB }}/${{ env.IMAGE_NAME }}:latest
+            cd ~/another-word-game
+            git pull
+            cd monolith
+            docker compose up -d
