@@ -13,7 +13,7 @@ interface Props {
 export const GuessAttemptItem = ({ size, activeAttempt, letter, isActive, backgroundColor }: Props) => {
   return activeAttempt ? (
     <View style={[styles.item, { borderWidth: isActive ? 5 : 1, width: size, height: size, borderRadius: size / 3 }]}>
-      <Text style={[styles.letterStyle, { fontSize: size - 5 }]}>{letter?.toUpperCase()}</Text>
+      <Text style={[styles.letterStyle, { fontSize: (size / 3) * 2 }]}>{letter?.toUpperCase()}</Text>
     </View>
   ) : (
     <View

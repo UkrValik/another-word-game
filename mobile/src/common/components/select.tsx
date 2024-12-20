@@ -6,16 +6,17 @@ interface Props {
   setOption: (option: string | number) => void;
   chosenOption: string | number;
   options: string[] | number[];
+  values: string[] | number[];
   selectOptionStyles?: ViewStyle;
 }
 
 export const Select = (props: Props) => {
-  const { options, chosenOption, selectOptionStyles, setOption } = props;
+  const { options, values, chosenOption, selectOptionStyles, setOption } = props;
 
   return (
     <View style={styles.selectWrapper}>
       {options.map((currOption, index) => (
-        <TouchableWithoutFeedback key={currOption.toString()} onPress={() => setOption(currOption)}>
+        <TouchableWithoutFeedback key={index.toString()} onPress={() => setOption(currOption)}>
           <View
             style={[
               chosenOption === currOption ? styles.chosenSelectOption : styles.selectOption,
@@ -23,7 +24,9 @@ export const Select = (props: Props) => {
               { borderLeftWidth: index > 0 ? 1 : 0, borderColor: colors.blue },
             ]}
           >
-            <Text style={chosenOption === currOption ? styles.chosenSelectText : styles.selectText}>{currOption}</Text>
+            <Text style={chosenOption === currOption ? styles.chosenSelectText : styles.selectText}>
+              {values[index]}
+            </Text>
           </View>
         </TouchableWithoutFeedback>
       ))}
