@@ -1,0 +1,35 @@
+name: CD-DEV-MONOLITH
+
+on: 
+  workflow_dispatch:
+    inputs:
+        tag:
+          required: true
+          type: string
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: awg
+
+jobs:
+  deploy-apps:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Deploy with script
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.DEV_HOST }}
+          username: ${{ secrets.DEV_USERNAME }}
+          key: ${{ secrets.DEV_KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            docker login ${{ env.REGISTRY }} -u ${{ secrets.USER_GITHUB }} -p ${{ secrets.CR_GITHUB_TOKEN }}
+            docker pull ${{ env.REGISTRY }}/${{ secrets.USER_GITHUB }}/${{ env.IMAGE_NAME }}:latest
+            cd ~/another-word-game
+            git pull
+            cd monolith
+            docker compose up -d
