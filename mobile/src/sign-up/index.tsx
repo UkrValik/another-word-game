@@ -1,10 +1,13 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { createRef, useState } from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { Keyboard, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
+import * as colors from '../../assets/colors.json';
 import { AppDispatch } from '../../store';
 import { userSignUp } from '../../store/user.slice';
+import { OpacityButton } from '../common/components/opacity-button';
+import { ScreenWrapper } from '../common/components/screen-wrapper';
 import { SignInStackParamList } from '../navigation/sign-in-stack';
 
 type Props = NativeStackScreenProps<SignInStackParamList, 'SignUp'>;
@@ -12,7 +15,6 @@ type Props = NativeStackScreenProps<SignInStackParamList, 'SignUp'>;
 const SignUp = ({ navigation }: Props) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const [inputActive, setInputActive] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [repPass, setRepPass] = useState('');
@@ -22,15 +24,12 @@ const SignUp = ({ navigation }: Props) => {
   const repPassRef = createRef<TextInput>();
 
   const onBackgroundPress = () => {
-    emailRef?.current?.blur();
-    passRef?.current?.blur();
-    repPassRef?.current?.blur();
-    setInputActive(false);
+    Keyboard.dismiss();
   };
 
   const goToSignIn = () => {
+    Keyboard.dismiss();
     navigation.goBack();
-    setInputActive(false);
   };
 
   const goToHome = () => {
@@ -40,63 +39,61 @@ const SignUp = ({ navigation }: Props) => {
   };
 
   return (
-    <TouchableWithoutFeedback onPress={onBackgroundPress}>
-      <View style={styles.container}>
-        <View style={styles.gameTitleContainer}>
-          <Text style={styles.gameTitle}>ONE MORE WORD GAME</Text>
-        </View>
-        <View style={styles.contentContainer}>
-          <View style={styles.signInTitleContainer}>
-            <Text style={styles.signInTitle}>Sign Up</Text>
-          </View>
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.inputComponent}
-              placeholder="email"
-              value={email}
-              onChangeText={(text) => setEmail(text)}
-              onFocus={() => setInputActive(true)}
-              ref={emailRef}
-            />
-          </View>
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.inputComponent}
-              placeholder="password"
-              value={password}
-              onChangeText={(text) => setPassword(text)}
-              onFocus={() => setInputActive(true)}
-              ref={passRef}
-            />
-          </View>
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.inputComponent}
-              placeholder="repeat password"
-              value={repPass}
-              onChangeText={(text) => setRepPass(text)}
-              onFocus={() => setInputActive(true)}
-              ref={repPassRef}
-            />
-          </View>
-          <View>
-            <TouchableOpacity style={styles.signInButtonContainer} onPress={goToHome}>
-              <Text style={styles.signInButtonTitle}>Sign Up</Text>
-            </TouchableOpacity>
-          </View>
-          <View>
-            <TouchableOpacity style={styles.signUpButtonContainer} onPress={goToSignIn}>
-              <Text style={styles.signUpButtonTitle}>Sign In</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-        <View style={[styles.voidContainer, { marginBottom: inputActive ? '30%' : '5%' }]}>
-          <TouchableOpacity style={[styles.signUpButtonContainer, { borderWidth: 0 }]} onPress={goToHome}>
-            <Text style={styles.signUpButtonTitle}>Play as guest</Text>
-          </TouchableOpacity>
-        </View>
+    <ScreenWrapper onBackgroundPress={onBackgroundPress} containerStyles={styles.container}>
+      <View style={styles.gameTitleContainer}>
+        <Text style={styles.gameTitle}>ONE MORE WORD GAME</Text>
       </View>
-    </TouchableWithoutFeedback>
+      <KeyboardAvoidingView
+        keyboardVerticalOffset={40}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.contentContainer}
+      >
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.inputComponent}
+            placeholder={'Email'}
+            value={email}
+            onChangeText={(text) => setEmail(text)}
+            ref={emailRef}
+          />
+        </View>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.inputComponent}
+            placeholder={'Password'}
+            value={password}
+            onChangeText={(text) => setPassword(text)}
+            ref={passRef}
+          />
+        </View>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.inputComponent}
+            placeholder={'Repeat password'}
+            value={repPass}
+            onChangeText={(text) => setRepPass(text)}
+            ref={repPassRef}
+          />
+        </View>
+        <OpacityButton
+          title={'Register'}
+          onPress={goToHome}
+          titleStyles={styles.signUpButtonTitle}
+          titleWrapperStyles={styles.signUpButtonContainer}
+        />
+        <View style={styles.orContainer}>
+          <View style={styles.orLine} />
+          <Text style={styles.orText}>or</Text>
+          <View style={styles.orLine} />
+        </View>
+        <OpacityButton
+          title={'Already have an account'}
+          onPress={goToSignIn}
+          titleStyles={styles.signInButtonTitle}
+          titleWrapperStyles={styles.signInButtonContainer}
+        />
+      </KeyboardAvoidingView>
+    </ScreenWrapper>
   );
 };
 
@@ -104,74 +101,74 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: 'center',
     alignItems: 'center',
-    flex: 1,
-    backgroundColor: 'rgba(255, 255, 255, 1)',
+    flex: 2,
   },
   contentContainer: {
     flex: 3,
     justifyContent: 'center',
     width: '90%',
+    marginBottom: '50%',
   },
   inputContainer: {
     borderWidth: 1,
     borderRadius: 10,
-    paddingVertical: '2%',
-    paddingHorizontal: '5%',
-    marginVertical: '2%',
-  },
-  signInButtonContainer: {
-    backgroundColor: 'rgba(0, 0, 0, 1)',
-    borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: '5%',
-    marginHorizontal: '25%',
-    marginVertical: '5%',
+    borderColor: colors['grey-light'] + 'aa',
+    marginVertical: '1%',
+    backgroundColor: colors.white,
   },
   signUpButtonContainer: {
-    backgroundColor: 'rgba(255, 255, 255, 1)',
-    justifyContent: 'center',
+    backgroundColor: colors.blue,
     alignItems: 'center',
     paddingVertical: '5%',
-    marginHorizontal: '25%',
-    marginBottom: '5%',
+    marginVertical: '3%',
+    marginTop: '7%',
+  },
+  signInButtonContainer: {
+    backgroundColor: colors.white,
+    alignItems: 'center',
+    paddingVertical: '5%',
+    marginVertical: '3%',
     borderWidth: 1,
-    borderRadius: 10,
+    borderColor: colors['grey-light'] + 'aa',
   },
   gameTitleContainer: {
     flex: 1,
+    marginTop: '30%',
     justifyContent: 'center',
-  },
-  signInTitleContainer: {
-    alignItems: 'center',
-    marginVertical: '10%',
-  },
-  voidContainer: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    paddingBottom: '5%',
-    width: '90%',
   },
   gameTitle: {
     fontWeight: '700',
     fontSize: 24,
   },
-  signInTitle: {
-    fontWeight: '400',
-    fontSize: 20,
+  signUpButtonTitle: {
+    color: colors.white3,
+    fontSize: 18,
+    fontWeight: 'bold',
   },
   signInButtonTitle: {
-    color: 'rgba(255, 255, 255, 1)',
+    color: colors['blue-dark'],
     fontSize: 18,
-    fontWeight: '400',
-  },
-  signUpButtonTitle: {
-    color: 'rgba(0, 0, 0, 1)',
-    fontSize: 18,
-    fontWeight: '400',
+    fontWeight: 'bold',
   },
   inputComponent: {
+    paddingVertical: '4.5%',
+    paddingHorizontal: '5%',
     fontSize: 18,
+  },
+  orContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginVertical: '5%',
+  },
+  orLine: {
+    backgroundColor: colors.grey,
+    height: 1,
+    width: '45%',
+  },
+  orText: {
+    color: colors.grey,
+    fontSize: 16,
   },
 });
 

@@ -6,20 +6,27 @@ interface Props {
   setOption: (option: string | number) => void;
   chosenOption: string | number;
   options: string[] | number[];
+  values: string[] | number[];
   selectOptionStyles?: ViewStyle;
 }
 
 export const Select = (props: Props) => {
-  const { options, chosenOption, selectOptionStyles, setOption } = props;
+  const { options, values, chosenOption, selectOptionStyles, setOption } = props;
 
   return (
     <View style={styles.selectWrapper}>
-      {options.map((currOption) => (
-        <TouchableWithoutFeedback key={currOption.toString()} onPress={() => setOption(currOption)}>
+      {options.map((currOption, index) => (
+        <TouchableWithoutFeedback key={index.toString()} onPress={() => setOption(currOption)}>
           <View
-            style={[chosenOption === currOption ? styles.chosenSelectOption : styles.selectOption, selectOptionStyles]}
+            style={[
+              chosenOption === currOption ? styles.chosenSelectOption : styles.selectOption,
+              selectOptionStyles,
+              { borderLeftWidth: index > 0 ? 1 : 0, borderColor: colors.blue },
+            ]}
           >
-            <Text style={chosenOption === currOption ? styles.chosenSelectText : styles.selectText}>{currOption}</Text>
+            <Text style={chosenOption === currOption ? styles.chosenSelectText : styles.selectText}>
+              {values[index]}
+            </Text>
           </View>
         </TouchableWithoutFeedback>
       ))}
@@ -29,34 +36,35 @@ export const Select = (props: Props) => {
 
 const styles = StyleSheet.create({
   selectWrapper: {
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
     alignItems: 'center',
     flexDirection: 'row',
     marginTop: '2%',
+    marginHorizontal: '5%',
+    backgroundColor: colors.white,
+    borderColor: colors.blue,
+    borderWidth: 1,
+    borderRadius: 5,
   },
   selectOption: {
-    borderRadius: 10,
-    borderColor: colors.black,
-    borderWidth: 1,
-    width: '30%',
+    flex: 1,
     paddingVertical: '1%',
     alignItems: 'center',
   },
   chosenSelectOption: {
-    borderRadius: 10,
-    backgroundColor: colors.black,
-    width: '30%',
+    flex: 1,
+    backgroundColor: colors.blue,
     paddingVertical: '1%',
     alignItems: 'center',
   },
   selectText: {
     fontWeight: '400',
-    fontSize: 20,
-    color: colors.black,
+    fontSize: 16,
+    color: colors.blue,
   },
   chosenSelectText: {
     fontWeight: '400',
-    fontSize: 20,
+    fontSize: 16,
     color: colors.white,
   },
 });

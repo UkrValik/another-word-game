@@ -5,6 +5,7 @@ import {
   NotFoundException,
   Param,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { GameService } from './game.service';
 import { UserId } from '../guards/user.decorator';
@@ -12,7 +13,9 @@ import { AddAttemptDto } from './dtos/add-attempt.dto';
 import { ChangeGameDurationDto } from './dtos/change-game-duration.dto';
 import { CreateGameDto } from './dtos/create-game.dto';
 import { VocabularyService } from '../vocabulary/vocabulary.service';
+import { JWTAuthGuard } from 'src/guards/jwt.guard';
 
+@UseGuards(JWTAuthGuard)
 @Controller('game')
 export class GameController {
   constructor(

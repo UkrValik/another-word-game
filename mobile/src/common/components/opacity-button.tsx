@@ -25,7 +25,7 @@ export const OpacityButton = (props: Props) => {
 
 const styles = StyleSheet.create({
   titleWrapper: {
-    backgroundColor: colors.black,
+    backgroundColor: colors.blue,
     borderRadius: 10,
     paddingVertical: 8,
     paddingHorizontal: 24,

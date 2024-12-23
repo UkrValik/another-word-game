@@ -1,7 +1,8 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
+import { LetterTable } from './letter-table/letter-table';
 import colors from '../../../assets/colors.json';
-import { IGame } from '../types';
+import { IAttempt, IGame } from '../types';
 
 interface Props {
   game: IGame;
@@ -9,28 +10,22 @@ interface Props {
 }
 
 export const GameCard = ({ game, navigateToGame }: Props) => {
-  const calculateTimeSpent = (timeSpent: number) => {
-    const minutes = Math.floor(timeSpent / 60);
-    const seconds = timeSpent % 60;
-    return (minutes < 10 ? '0' + minutes : minutes) + ':' + (seconds < 10 ? '0' + seconds : seconds);
-  };
+  const attempts = game.attempts;
+  const attemptsArray: (IAttempt | number)[] = [];
 
-  const attemptsLeft = game.gameLevel - game.attempts.length;
+  for (let i = 0; i < game.gameLevel; ++i) {
+    attemptsArray.push(attempts[i] ? attempts[i] : i);
+  }
 
   return (
     <TouchableOpacity style={styles.container} onPress={() => navigateToGame(game._id)}>
+      <View style={styles.avatarContainer}>
+        <View style={styles.letterTableWrapper}>
+          <LetterTable size={8 + (2 / 3) * game.length} attemptsArray={attemptsArray} game={game} />
+        </View>
+      </View>
       <View style={styles.titleWrapper}>
         <Text style={styles.titleLabel}>{game.name}</Text>
-      </View>
-      <View style={styles.timeAttemptsContainer}>
-        <View style={styles.labelWrapper}>
-          <Text style={styles.label}>Time Spent: {calculateTimeSpent(game.duration || 0)}</Text>
-        </View>
-        <View style={styles.labelWrapper}>
-          <Text style={styles.label}>
-            Attempts Left: {attemptsLeft.toString()} / {game.gameLevel.toString()}
-          </Text>
-        </View>
       </View>
     </TouchableOpacity>
   );
@@ -38,29 +33,13 @@ export const GameCard = ({ game, navigateToGame }: Props) => {
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 20,
-    paddingVertical: 5,
-    backgroundColor: colors.black,
+    flexDirection: 'row',
+    paddingHorizontal: 15,
+    paddingVertical: 15,
+    backgroundColor: colors.white,
     borderRadius: 10,
     marginVertical: '1%',
     width: '90%',
-  },
-  timeAttemptsContainer: {
-    backgroundColor: colors.black,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginVertical: '2%',
-  },
-  labelWrapper: {
-    paddingVertical: '1%',
-    paddingHorizontal: '3%',
-    borderRadius: 10,
-    backgroundColor: colors.white,
-  },
-  label: {
-    backgroundColor: colors.white,
-    color: colors.black,
-    fontSize: 12,
   },
   titleWrapper: {
     backgroundColor: colors.white,
@@ -72,5 +51,17 @@ const styles = StyleSheet.create({
   titleLabel: {
     color: colors.black,
     fontSize: 20,
+    fontWeight: 'bold',
+  },
+  avatarContainer: {
+    width: 75,
+    height: 75,
+    backgroundColor: colors['blue-sky'],
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  letterTableWrapper: {
+    width: '80%',
   },
 });

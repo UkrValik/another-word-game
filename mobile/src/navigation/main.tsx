@@ -3,7 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import { HomeStack } from './home-stack';
+import { BottomTabs } from './bottom-tab';
 import { SignInStack } from './sign-in-stack';
 import { selectToken } from '../../store/user.slice';
 
@@ -16,7 +16,7 @@ export const Main = () => {
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {token ? (
-          <Stack.Screen name="HomeStack" component={HomeStack} />
+          <Stack.Screen name="BottomTabs" component={BottomTabs} />
         ) : (
           <Stack.Screen name="SignInStack" component={SignInStack} />
         )}
