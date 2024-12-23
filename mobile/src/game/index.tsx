@@ -1,6 +1,6 @@
 import { useFocusEffect } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Keyboard, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -11,9 +11,11 @@ import {
   addDuration,
   changeGameDuration,
   createAttempt,
+  saveLastAttemptWord,
   saveWordNotFound,
   selectActiveGames,
   selectFinishedGames,
+  selectLastAttemptWord,
   selectWordNotFound,
 } from '../../store/game.slice';
 import { selectToken } from '../../store/user.slice';
@@ -42,10 +44,10 @@ export const GameScreen = ({ route }: Props) => {
   const dispatch = useDispatch<AppDispatch>();
   const token = useSelector(selectToken);
   const wordNotFound = useSelector(selectWordNotFound);
+  const lastAttemptWord = useSelector(selectLastAttemptWord);
 
   const [attemptWord, setAttemptWord] = useState('');
   const [duration, setDuration] = useState(game.duration);
-  const [showWordNotFound, setShowWordNotFound] = useState(false);
 
   const wordInputRef = useRef<TextInput>(null);
   const durationRef = useRef(game.duration);
@@ -75,15 +77,10 @@ export const GameScreen = ({ route }: Props) => {
     if (attemptWord.length === game.length) {
       dispatch(createAttempt({ attemptBody, token }));
       dispatch(changeGameDuration({ gameId: game._id, duration: durationRef.current, token }));
-      setAttemptWord('');
+      dispatch(saveLastAttemptWord(attemptWord.toUpperCase()));
+      // setAttemptWord('');
     }
   };
-
-  if (wordNotFound) {
-    dispatch(saveWordNotFound(false));
-    setShowWordNotFound(true);
-    setTimeout(() => setShowWordNotFound(false), 5000);
-  }
 
   useFocusEffect(
     useCallback(() => {
@@ -96,6 +93,7 @@ export const GameScreen = ({ route }: Props) => {
         }
       }, 1000);
       return () => {
+        dispatch(saveWordNotFound(false));
         if (!gameRef.current.finished) {
           dispatch(addDuration({ gameId: game._id, duration: durationRef.current }));
           dispatch(changeGameDuration({ gameId: game._id, duration: durationRef.current, token }));
@@ -105,11 +103,19 @@ export const GameScreen = ({ route }: Props) => {
     }, []),
   );
 
+  useEffect(() => {
+    setAttemptWord('');
+  }, [game.attempts.length]);
+
   return (
     <ScreenWrapper safe onBackgroundPress={Keyboard.dismiss} containerStyles={styles.container}>
       <GameHeader game={game} duration={duration} />
-      {!showWordNotFound && !game.finished && <View style={{ height: 15 }} />}
-      {showWordNotFound && <Text style={styles.warningText}>{wordNotFoundText}</Text>}
+      {!wordNotFound && !game.finished && <View style={{ height: 15 }} />}
+      {wordNotFound && (
+        <Text style={styles.warningText}>
+          {wordNotFoundText}: {lastAttemptWord}
+        </Text>
+      )}
       {game.finished && <Text>{game.word}</Text>}
       <View style={styles.attemptsWrapper}>
         <LetterTable
@@ -130,7 +136,7 @@ export const GameScreen = ({ route }: Props) => {
       <TextInput
         ref={wordInputRef}
         value={attemptWord}
-        onChangeText={(text) => setAttemptWord(text)}
+        onChangeText={(text) => setAttemptWord(text.trim())}
         maxLength={game.length}
         style={styles.attemptInput}
       />

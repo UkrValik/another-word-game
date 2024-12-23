@@ -51,7 +51,10 @@ export const GuessAttemptLetters = ({
               size={size - letterCount}
               letter={(attemptWord && attemptWord[i]) || ''}
               activeAttempt={activeAttempt}
-              isActive={attemptWord?.length === i}
+              isActive={
+                attemptWord?.length === i ||
+                (letterArray.length === attemptWord?.length && attemptWord?.length - 1 === i)
+              }
             />
           ))}
         </View>

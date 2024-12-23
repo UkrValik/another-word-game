@@ -16,6 +16,7 @@ import { RootState } from '.';
 export interface IGameSlice {
   finishedGames: IGame[];
   activeGames: IGame[];
+  lastAttemptWord: string;
   wordNotFound: boolean;
   loadingGame: boolean;
   loadingAttempt: boolean;
@@ -26,6 +27,7 @@ export interface IGameSlice {
 const initialState: IGameSlice = {
   finishedGames: [],
   activeGames: [],
+  lastAttemptWord: '',
   wordNotFound: false,
   loadingGame: false,
   loadingAttempt: false,
@@ -69,6 +71,9 @@ export const gameSlice = createSlice({
     },
     saveWordNotFound: (state, action: PayloadAction<boolean>) => {
       state.wordNotFound = action.payload;
+    },
+    saveLastAttemptWord: (state, action: PayloadAction<string>) => {
+      state.lastAttemptWord = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -136,12 +141,13 @@ export const gameSlice = createSlice({
   },
 });
 
-export const { addDuration, saveWordNotFound } = gameSlice.actions;
+export const { addDuration, saveWordNotFound, saveLastAttemptWord } = gameSlice.actions;
 
 export const selectActiveGames = (state: RootState) => state.game.activeGames;
 export const selectFinishedGames = (state: RootState) => state.game.finishedGames;
 export const selectAttemptLoading = (state: RootState) => state.game.loadingAttempt;
 export const selectAttemptError = (state: RootState) => state.game.attemptError;
 export const selectWordNotFound = (state: RootState) => state.game.wordNotFound;
+export const selectLastAttemptWord = (state: RootState) => state.game.lastAttemptWord;
 
 export default gameSlice.reducer;
