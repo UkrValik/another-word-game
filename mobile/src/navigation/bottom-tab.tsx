@@ -3,15 +3,15 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { RouteProp, getFocusedRouteNameFromRoute } from '@react-navigation/native';
 
+import { ArchivStack } from './archiv-stack';
 import { HomeStack } from './home-stack';
 import * as colors from '../../assets/colors.json';
-import { ArchivScreen } from '../archiv';
 import { FriendScreen } from '../friends';
 import { ProfileScreen } from '../profile';
 
 export type BottomTabsParamList = {
   HomeStack: undefined;
-  ArchivScreen: undefined;
+  ArchivStack: undefined;
   FriendScreen: undefined;
   ProfileScreen: undefined;
 };
@@ -83,8 +83,8 @@ export const BottomTabs = () => {
         }}
       />
       <Tab.Screen
-        name={'ArchivScreen'}
-        component={ArchivScreen}
+        name={'ArchivStack'}
+        component={ArchivStack}
         options={{
           title: '',
           tabBarIcon: ({ focused }) => (
