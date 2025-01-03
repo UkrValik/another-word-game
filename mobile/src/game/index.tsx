@@ -105,6 +105,7 @@ export const GameScreen = ({ route }: Props) => {
 
   useEffect(() => {
     setAttemptWord('');
+    gameRef.current = { ...game };
   }, [game.attempts.length]);
 
   return (
