@@ -1,5 +1,5 @@
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
-import { ScrollView, StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { useSelector } from 'react-redux';
 
 import { selectFinishedGames } from '../../store/game.slice';
@@ -23,6 +23,7 @@ export const ArchivScreen = ({ navigation }: Props) => {
           <GameCard key={game._id} game={game} navigateToGame={navigateToGame} />
         ))}
       </ScrollView>
+      <View style={styles.bottomTabSafeArea} />
     </ScreenWrapper>
   );
 };
@@ -34,5 +35,8 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     alignItems: 'center',
+  },
+  bottomTabSafeArea: {
+    height: 100,
   },
 });

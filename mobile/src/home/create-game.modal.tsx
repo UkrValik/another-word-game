@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Keyboard,
   Modal,
@@ -32,6 +32,7 @@ export const CreateGameModal = (props: Props) => {
   const token = useSelector(selectToken);
   const activeGames = useSelector(selectActiveGames);
   const finishedGames = useSelector(selectFinishedGames);
+  console.log(activeGames.length + finishedGames.length);
 
   const [gameLevel, setGameLevel] = useState<string | number>(GameLevel.Normal);
   const [wordLength, setWordLength] = useState<string | number>(6);
@@ -52,6 +53,10 @@ export const CreateGameModal = (props: Props) => {
     setWordLength(6);
     setGameName(`Game ${activeGames.length + finishedGames.length + 2}`);
   };
+
+  useEffect(() => {
+    setGameName(`Game ${activeGames.length + finishedGames.length + 1}`);
+  }, [activeGames.length, finishedGames.length]);
 
   return (
     <Modal visible={visible} animationType={'fade'} transparent>
