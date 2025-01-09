@@ -1,6 +1,6 @@
 import { useFocusEffect } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
@@ -9,7 +9,7 @@ import { GameList } from './game-list';
 import { HomeHeader } from './header';
 import * as colors from '../../assets/colors.json';
 import { AppDispatch } from '../../store';
-import { getUserGames, selectActiveGames } from '../../store/game.slice';
+import { getUserGames, saveLastGameId, selectActiveGames, selectLastGameId } from '../../store/game.slice';
 import { selectToken } from '../../store/user.slice';
 import { ScreenWrapper } from '../common/components/screen-wrapper';
 import { HomeStackParamList } from '../navigation/home-stack';
@@ -24,12 +24,20 @@ export const Home = ({ navigation }: Props) => {
   const dispatch = useDispatch<AppDispatch>();
   const token = useSelector(selectToken);
   const activeGames = useSelector(selectActiveGames);
+  const lastGameId = useSelector(selectLastGameId);
 
   useFocusEffect(
     useCallback(() => {
       dispatch(getUserGames(token));
     }, []),
   );
+
+  useEffect(() => {
+    if (lastGameId !== '') {
+      navigateToGame(lastGameId);
+      dispatch(saveLastGameId(''));
+    }
+  }, [lastGameId]);
 
   return (
     <ScreenWrapper containerStyles={styles.container}>

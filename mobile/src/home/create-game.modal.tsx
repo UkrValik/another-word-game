@@ -47,7 +47,7 @@ export const CreateGameModal = (props: Props) => {
       started: new Date().toISOString(),
     };
     dispatch(createGame({ game, token }));
-    setVisible(false);
+    setTimeout(() => setVisible(false), 500);
     setGameLevel(GameLevel.Normal);
     setWordLength(6);
     setGameName(`Game ${activeGames.length + finishedGames.length + 2}`);
