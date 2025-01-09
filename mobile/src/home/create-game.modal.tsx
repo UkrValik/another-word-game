@@ -32,7 +32,6 @@ export const CreateGameModal = (props: Props) => {
   const token = useSelector(selectToken);
   const activeGames = useSelector(selectActiveGames);
   const finishedGames = useSelector(selectFinishedGames);
-  console.log(activeGames.length + finishedGames.length);
 
   const [gameLevel, setGameLevel] = useState<string | number>(GameLevel.Normal);
   const [wordLength, setWordLength] = useState<string | number>(6);

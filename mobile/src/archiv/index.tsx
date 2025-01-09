@@ -1,8 +1,12 @@
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
-import { selectFinishedGames } from '../../store/game.slice';
+import { AppDispatch } from '../../store';
+import { getUserGames, selectFinishedGames } from '../../store/game.slice';
+import { selectToken } from '../../store/user.slice';
 import { GameCard } from '../common/components/game-card';
 import { ScreenWrapper } from '../common/components/screen-wrapper';
 import { ArchivStackParamList } from '../navigation/archiv-stack';
@@ -10,7 +14,15 @@ import { ArchivStackParamList } from '../navigation/archiv-stack';
 type Props = BottomTabScreenProps<ArchivStackParamList, 'ArchivScreen'>;
 
 export const ArchivScreen = ({ navigation }: Props) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const token = useSelector(selectToken);
   const finishedGames = useSelector(selectFinishedGames);
+
+  useFocusEffect(
+    useCallback(() => {
+      dispatch(getUserGames(token));
+    }, []),
+  );
 
   const navigateToGame = (gameId: string) => {
     navigation.navigate('GameScreen', { gameId });
@@ -31,7 +43,6 @@ export const ArchivScreen = ({ navigation }: Props) => {
 const styles = StyleSheet.create({
   scrollViewStyle: {
     flex: 1,
-    // marginTop: '5%',
   },
   contentContainer: {
     alignItems: 'center',

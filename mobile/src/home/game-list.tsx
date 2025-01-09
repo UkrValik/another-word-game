@@ -1,11 +1,7 @@
-import { useFocusEffect } from '@react-navigation/native';
-import { useCallback } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
-import { AppDispatch } from '../../store';
-import { getUserGames, selectActiveGames } from '../../store/game.slice';
-import { selectToken } from '../../store/user.slice';
+import { selectActiveGames } from '../../store/game.slice';
 import { GameCard } from '../common/components/game-card';
 
 interface Props {
@@ -13,15 +9,7 @@ interface Props {
 }
 
 export const GameList = ({ navigateToGame }: Props) => {
-  const dispatch = useDispatch<AppDispatch>();
   const activeGames = useSelector(selectActiveGames);
-  const token = useSelector(selectToken);
-
-  useFocusEffect(
-    useCallback(() => {
-      dispatch(getUserGames(token));
-    }, []),
-  );
 
   return (
     <ScrollView style={styles.scrollViewStyle} contentContainerStyle={styles.contentContainer}>
