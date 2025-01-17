@@ -1,7 +1,7 @@
 import { useFocusEffect } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Keyboard, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Keyboard, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { GameHeader } from './header';
@@ -22,7 +22,7 @@ import { selectToken } from '../../store/user.slice';
 import { LetterTable } from '../common/components/letter-table/letter-table';
 import { OpacityButton } from '../common/components/opacity-button';
 import { ScreenWrapper } from '../common/components/screen-wrapper';
-import { IAttempt } from '../common/types';
+import { GameLevel, IAttempt } from '../common/types';
 import { HomeStackParamList } from '../navigation/home-stack';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'GameScreen'>;
@@ -36,6 +36,7 @@ export const GameScreen = ({ route }: Props) => {
   const game = [...activeGames, ...finishedGames].find((g) => g._id === gameId)!;
   const attempts = game.attempts;
   const attemptsArray: (IAttempt | number)[] = [];
+  const gameIsBig = game.gameLevel !== GameLevel.Hard;
 
   for (let i = 0; i < game.gameLevel; ++i) {
     attemptsArray.push(attempts[i] ? attempts[i] : i);
@@ -48,8 +49,10 @@ export const GameScreen = ({ route }: Props) => {
 
   const [attemptWord, setAttemptWord] = useState('');
   const [duration, setDuration] = useState(game.duration);
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
 
   const wordInputRef = useRef<TextInput>(null);
+  const scrollViewRef = useRef<ScrollView>(null);
   const durationRef = useRef(game.duration);
   const gameRef = useRef(game);
 
@@ -82,6 +85,11 @@ export const GameScreen = ({ route }: Props) => {
     }
   };
 
+  useEffect(() => {
+    const y = (game.attempts.length - 4) * 80;
+    setTimeout(() => scrollViewRef.current?.scrollTo({ y, animated: true }), 50);
+  }, [keyboardVisible, game.attempts.length]);
+
   useFocusEffect(
     useCallback(() => {
       const interval = setInterval(() => {
@@ -106,6 +114,9 @@ export const GameScreen = ({ route }: Props) => {
   useEffect(() => {
     setAttemptWord('');
     gameRef.current = { ...game };
+    if (game.gameLevel === game.attempts.length) {
+      Keyboard.dismiss();
+    }
   }, [game.attempts.length]);
 
   return (
@@ -118,16 +129,28 @@ export const GameScreen = ({ route }: Props) => {
         </Text>
       )}
       {game.finished && <Text>{game.word}</Text>}
-      <View style={styles.attemptsWrapper}>
-        <LetterTable
-          size={40}
-          attemptsArray={attemptsArray}
-          attemptWord={attemptWord}
-          game={game}
-          focusWordInput={focusWordInput}
-        />
-      </View>
-      <View style={styles.buttonContainer}>
+      <ScrollView
+        ref={scrollViewRef}
+        scrollEnabled={keyboardVisible && gameIsBig}
+        automaticallyAdjustKeyboardInsets
+        contentContainerStyle={
+          keyboardVisible && game.gameLevel === GameLevel.Easy
+            ? styles.scrollViewContainerWithKeyboard
+            : styles.scrollViewContainerRegular
+        }
+        style={keyboardVisible && gameIsBig ? styles.scrollViewStyleWithKeyboard : styles.scrollViewStyleRegular}
+      >
+        <View style={styles.attemptsWrapper}>
+          <LetterTable
+            size={40}
+            attemptsArray={attemptsArray}
+            attemptWord={attemptWord}
+            game={game}
+            focusWordInput={focusWordInput}
+          />
+        </View>
+      </ScrollView>
+      <View style={styles.buttonContainerRegular}>
         <OpacityButton
           onPress={onCreateAttempt}
           title={'Guess Attempt'}
@@ -137,9 +160,11 @@ export const GameScreen = ({ route }: Props) => {
       <TextInput
         ref={wordInputRef}
         value={attemptWord}
-        onChangeText={(text) => setAttemptWord(text.trim())}
         maxLength={game.length}
         style={styles.attemptInput}
+        onChangeText={(text) => setAttemptWord(text.trim())}
+        onFocus={() => setKeyboardVisible(true)}
+        onBlur={() => setKeyboardVisible(false)}
       />
     </ScreenWrapper>
   );
@@ -149,6 +174,20 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
+  },
+  scrollViewContainerRegular: {
+    width: '100%',
+  },
+  scrollViewContainerWithKeyboard: {
+    width: '100%',
+    height: '145%',
+  },
+  scrollViewStyleRegular: {
+    flexGrow: 0,
+  },
+  scrollViewStyleWithKeyboard: {
+    flexGrow: 0,
+    height: '40%',
   },
   attemptsWrapper: {
     padding: '3%',
@@ -173,10 +212,16 @@ const styles = StyleSheet.create({
     color: colors.black,
     fontSize: 18,
   },
-  buttonContainer: {
+  buttonContainerRegular: {
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: '5%',
+  },
+  buttonContainerAboveKeyboard: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: '5%',
+    position: 'absolute',
   },
   warningText: {
     alignSelf: 'flex-start',
