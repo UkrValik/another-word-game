@@ -5,6 +5,7 @@ import { Keyboard, ScrollView, StyleSheet, Text, TextInput, View } from 'react-n
 import { useDispatch, useSelector } from 'react-redux';
 
 import { GameHeader } from './header';
+import { LetterBar } from './letter-bar';
 import * as colors from '../../assets/colors.json';
 import { AppDispatch } from '../../store';
 import {
@@ -86,7 +87,7 @@ export const GameScreen = ({ route }: Props) => {
   };
 
   useEffect(() => {
-    const y = (game.attempts.length - 4) * 80;
+    const y = (game.attempts.length - 4) * 80 + 200;
     setTimeout(() => scrollViewRef.current?.scrollTo({ y, animated: true }), 50);
   }, [keyboardVisible, game.attempts.length]);
 
@@ -140,6 +141,7 @@ export const GameScreen = ({ route }: Props) => {
         }
         style={keyboardVisible && gameIsBig ? styles.scrollViewStyleWithKeyboard : styles.scrollViewStyleRegular}
       >
+        <LetterBar attempts={game.attempts} word={game.word} />
         <View style={styles.attemptsWrapper}>
           <LetterTable
             size={40}
@@ -225,7 +227,7 @@ const styles = StyleSheet.create({
   },
   warningText: {
     alignSelf: 'flex-start',
-    marginLeft: '5%',
+    // marginLeft: '1.5%',
     color: 'red',
   },
   attemptInput: {
