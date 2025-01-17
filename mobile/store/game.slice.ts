@@ -16,6 +16,8 @@ import { RootState } from '.';
 export interface IGameSlice {
   finishedGames: IGame[];
   activeGames: IGame[];
+  lastAttemptWord: string;
+  lastGameId: string;
   wordNotFound: boolean;
   loadingGame: boolean;
   loadingAttempt: boolean;
@@ -26,6 +28,8 @@ export interface IGameSlice {
 const initialState: IGameSlice = {
   finishedGames: [],
   activeGames: [],
+  lastAttemptWord: '',
+  lastGameId: '',
   wordNotFound: false,
   loadingGame: false,
   loadingAttempt: false,
@@ -70,6 +74,12 @@ export const gameSlice = createSlice({
     saveWordNotFound: (state, action: PayloadAction<boolean>) => {
       state.wordNotFound = action.payload;
     },
+    saveLastAttemptWord: (state, action: PayloadAction<string>) => {
+      state.lastAttemptWord = action.payload;
+    },
+    saveLastGameId: (state, action: PayloadAction<string>) => {
+      state.lastGameId = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -82,6 +92,7 @@ export const gameSlice = createSlice({
         state.loadingGame = false;
         state.gameError = '';
         state.activeGames.unshift(action.payload);
+        state.lastGameId = action.payload._id;
       })
       .addCase(createGame.rejected, (state, action) => {
         state.loadingGame = false;
@@ -136,12 +147,14 @@ export const gameSlice = createSlice({
   },
 });
 
-export const { addDuration, saveWordNotFound } = gameSlice.actions;
+export const { addDuration, saveWordNotFound, saveLastAttemptWord, saveLastGameId } = gameSlice.actions;
 
 export const selectActiveGames = (state: RootState) => state.game.activeGames;
 export const selectFinishedGames = (state: RootState) => state.game.finishedGames;
 export const selectAttemptLoading = (state: RootState) => state.game.loadingAttempt;
 export const selectAttemptError = (state: RootState) => state.game.attemptError;
 export const selectWordNotFound = (state: RootState) => state.game.wordNotFound;
+export const selectLastAttemptWord = (state: RootState) => state.game.lastAttemptWord;
+export const selectLastGameId = (state: RootState) => state.game.lastGameId;
 
 export default gameSlice.reducer;

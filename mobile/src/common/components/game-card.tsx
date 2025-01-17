@@ -13,6 +13,12 @@ export const GameCard = ({ game, navigateToGame }: Props) => {
   const attempts = game.attempts;
   const attemptsArray: (IAttempt | number)[] = [];
 
+  const calculateTimeSpent = (timeSpent: number) => {
+    const minutes = Math.floor(timeSpent / 60);
+    const seconds = timeSpent % 60;
+    return (minutes < 10 ? '0' + minutes : minutes) + ':' + (seconds < 10 ? '0' + seconds : seconds);
+  };
+
   for (let i = 0; i < game.gameLevel; ++i) {
     attemptsArray.push(attempts[i] ? attempts[i] : i);
   }
@@ -26,6 +32,7 @@ export const GameCard = ({ game, navigateToGame }: Props) => {
       </View>
       <View style={styles.titleWrapper}>
         <Text style={styles.titleLabel}>{game.name}</Text>
+        <Text style={styles.timeLabel}>{calculateTimeSpent(game.duration)}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -63,5 +70,10 @@ const styles = StyleSheet.create({
   },
   letterTableWrapper: {
     width: '80%',
+  },
+  timeLabel: {
+    marginLeft: 5,
+    marginTop: 5,
+    fontSize: 16,
   },
 });

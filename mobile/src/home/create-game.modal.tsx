@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Keyboard,
   Modal,
@@ -47,11 +47,15 @@ export const CreateGameModal = (props: Props) => {
       started: new Date().toISOString(),
     };
     dispatch(createGame({ game, token }));
-    setVisible(false);
+    setTimeout(() => setVisible(false), 500);
     setGameLevel(GameLevel.Normal);
     setWordLength(6);
     setGameName(`Game ${activeGames.length + finishedGames.length + 2}`);
   };
+
+  useEffect(() => {
+    setGameName(`Game ${activeGames.length + finishedGames.length + 1}`);
+  }, [activeGames.length, finishedGames.length]);
 
   return (
     <Modal visible={visible} animationType={'fade'} transparent>
